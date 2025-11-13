@@ -1,1 +1,0 @@
-error at 15:2: mismatched input '<EOF>' expecting 'pkg'

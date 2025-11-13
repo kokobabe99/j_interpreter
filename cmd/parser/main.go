@@ -10,7 +10,8 @@ import (
 
 	antlr "github.com/antlr4-go/antlr/v4"
 
-	"interpreter/gen"
+	"interpreter/parser_src" // generated parser
+	printer "interpreter/tree"
 )
 
 /* ---------------- Error Collector ---------------- */
@@ -46,90 +47,18 @@ func outName(srcPath, suffix string) string {
 	return base + "_" + suffix
 }
 
-/* ---------------- Pretty Tree Printer ---------------- */
-
-func labelFor(node antlr.Tree, p antlr.Parser) string {
-	switch n := node.(type) {
-	case antlr.RuleNode:
-		ruleIdx := n.GetRuleContext().GetRuleIndex()
-		rules := p.GetRuleNames()
-		if ruleIdx >= 0 && ruleIdx < len(rules) {
-			return strings.ToUpper(rules[ruleIdx]) // 规则名大写
-		}
-	case antlr.TerminalNode:
-		if tok := n.GetSymbol(); tok != nil {
-			tt := tok.GetTokenType()
-			sym := p.GetSymbolicNames()
-			lit := p.GetLiteralNames()
-
-			name := ""
-			if tt >= 0 && tt < len(sym) && sym[tt] != "" {
-				name = sym[tt]
-			} else if tt >= 0 && tt < len(lit) && lit[tt] != "" {
-				name = lit[tt]
-			} else {
-				name = fmt.Sprintf("T_%d", tt)
-			}
-
-			txt := tok.GetText()
-			if txt == "" {
-				txt = "<ε>"
-			}
-			return fmt.Sprintf("%s %q", name, txt)
-		}
-	}
-	// 兜底
-	return antlr.TreesStringTree(node, nil, p)
-}
-
-func childrenOf(t antlr.Tree) []antlr.Tree {
-	n := t.GetChildCount()
-	out := make([]antlr.Tree, 0, n)
-	for i := 0; i < n; i++ {
-		out = append(out, t.GetChild(i))
-	}
-	return out
-}
-
-func renderASCII(root antlr.Tree, p antlr.Parser) string {
-	var b strings.Builder
-	var walk func(node antlr.Tree, prefix string, isLast bool)
-
-	walk = func(node antlr.Tree, prefix string, isLast bool) {
-		conn := "├─ "
-		next := prefix + "│  "
-		if isLast {
-			conn = "└─ "
-			next = prefix + "   "
-		}
-		if prefix == "" {
-			b.WriteString("ROOT\n")
-			b.WriteString(conn + labelFor(node, p) + "\n")
-		} else {
-			b.WriteString(prefix + conn + labelFor(node, p) + "\n")
-		}
-		kids := childrenOf(node)
-		for i, c := range kids {
-			walk(c, next, i == len(kids)-1)
-		}
-	}
-	walk(root, "", true)
-	return b.String()
-}
-
 /* ---------------- main ---------------- */
 
 func main() {
-
 	data, srcPath, err := readInput()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "read error: %v\n", err)
 		os.Exit(1)
 	}
+	fmt.Fprintf(os.Stderr, "DEBUG: read %d bytes from %s\n", len(data), srcPath)
 
-	// 1) 词法：构建 lexer，收集词法错误，填充 token 流
 	input := antlr.NewInputStream(string(data))
-	lexer := gen.NewJLangLexer(input) // ✅ 这里参数类型 antlr.CharStream 正确
+	lexer := parser_src.NewJLangLexer(input)
 
 	lexErr := &collectingErrorListener{}
 	lexer.RemoveErrorListeners()
@@ -138,13 +67,9 @@ func main() {
 	tokens := antlr.NewCommonTokenStream(lexer, 0)
 	tokens.Fill()
 
-	// 打印 token 列表（类型、词素、位置）
 	fmt.Println("TOKENS:")
-
-	// 正确获取 Token 名：使用 GetSymbolicNames / GetLiteralNames
 	sym := lexer.GetSymbolicNames()
 	lit := lexer.GetLiteralNames()
-
 	for _, tk := range tokens.GetAllTokens() {
 		tt := tk.GetTokenType()
 		name := ""
@@ -158,18 +83,23 @@ func main() {
 		fmt.Printf("  %-18s %-12q @ %d:%d\n", name, tk.GetText(), tk.GetLine(), tk.GetColumn()+1)
 	}
 
-	// 2) 语法：复用 token 流给 parser（重置指针即可）
-	tokens.Reset()
-	parser := gen.NewJLangParser(tokens)
+	input2 := antlr.NewInputStream(string(data))
+	lexer2 := parser_src.NewJLangLexer(input2)
+
+	lexErr2 := &collectingErrorListener{}
+	lexer2.RemoveErrorListeners()
+	lexer2.AddErrorListener(lexErr2)
+
+	stream2 := antlr.NewCommonTokenStream(lexer2, 0)
+	parser := parser_src.NewJLangParser(stream2)
 
 	parErr := &collectingErrorListener{}
 	parser.RemoveErrorListeners()
 	parser.AddErrorListener(parErr)
 
-	tree := parser.Program() // 触发解析
+	tree := parser.Program()
 
-	/* 3) 输出 ASCII 解析树到终端与文件 */
-	ascii := renderASCII(tree, parser)
+	ascii := printer.RenderASCII(tree, parser)
 	fmt.Println("\nPARSE TREE:")
 	fmt.Println(ascii)
 
@@ -180,9 +110,9 @@ func main() {
 		fmt.Fprintf(os.Stderr, "wrote %s\n", treeFile)
 	}
 
-	/* 4) 若有错误，写 *_errors.txt */
-	if len(lexErr.Errors)+len(parErr.Errors) > 0 {
+	if len(lexErr.Errors)+len(lexErr2.Errors)+len(parErr.Errors) > 0 {
 		lines := append([]string{}, lexErr.Errors...)
+		lines = append(lines, lexErr2.Errors...)
 		lines = append(lines, parErr.Errors...)
 		errText := strings.Join(lines, "\n") + "\n"
 		errFile := outName(srcPath, "errors.txt")

@@ -4,14 +4,13 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"interpreter/parser_src"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"interpreter/gen"
-
-	antlr "github.com/antlr4-go/antlr/v4" // ✅ 新路径
+	antlr "github.com/antlr4-go/antlr/v4" //
 )
 
 // ---- Error collector ----
@@ -72,7 +71,7 @@ func main() {
 
 	// 1) LEX: collect tokens and lexer errors
 	input := antlr.NewInputStream(string(data))
-	lexer := gen.NewJLangLexer(input)
+	lexer := parser_src.NewJLangLexer(input)
 
 	lexErr := &collectingErrorListener{}
 	lexer.RemoveErrorListeners()
@@ -103,9 +102,9 @@ func main() {
 	// 2) PARSE: build parse tree and collect parser errors
 	// 重置输入流
 	input = antlr.NewInputStream(string(data))
-	lexer = gen.NewJLangLexer(input)
+	lexer = parser_src.NewJLangLexer(input)
 	stream := antlr.NewCommonTokenStream(lexer, 0)
-	parser := gen.NewJLangParser(stream)
+	parser := parser_src.NewJLangParser(stream)
 
 	parErr := &collectingErrorListener{}
 	parser.RemoveErrorListeners()

@@ -1,6 +1,6 @@
 # J Language Interpreter
 
-A lexical analyzer (tokenizer) for the custom **J Language**.
+A Interpreter project (tokenizer,parser,Interpreter) for the custom **J Language**.
 
 ---
 
@@ -26,58 +26,3 @@ A lexical analyzer (tokenizer) for the custom **J Language**.
 ---
 
 ## ✅ How to Run
-
-### Option 1: Provide a `.jl` source file
-```bash
-  go run jlang_lexer.go main.jl
-
-```
-
-Output:
-
-- JSON printed to terminal
-
-- File main_jl_output.txt is created 
-### Option 2 — From stdin
-
-```bash
-    cat main.jl | go run main.go
-    go run main.go <
-```
-
-
-Output:
-
-- JSON is printed to terminal
-
-- A file stdin_output.txt is created automatically
-
-Output Format (JSON)
-
-```json
-
-{
-  "tokens": [
-    {"type":"KW_PKG","lexeme":"pkg","line":1,"col":1},
-    {"type":"IDENT","lexeme":"main","line":1,"col":5}
-  ],
-  "errors": [
-    "lexical error at 5:14: invalid hex literal"
-  ]
-}
-```
-
-
-
-## ✅ Example Source (main.jl)
-
-```text
-    pkg main
-imp "std/io"
-def main(): i32 {
-  later handler()
-  var x: i32 = 1_024; if x > 0 { io.Println("ok") } panic "boom"; ret 0
-}
-def handler() { msg := recover(); if msg != "" { io.Println("recovered:", msg) } }
-
-```
