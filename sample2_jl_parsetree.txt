@@ -34,36 +34,41 @@ ROOT
    │     └─ BLOCK
    │        ├─ LBRACE "{"
    │        ├─ STMTLIST
-   │        │  └─ STMT
-   │        │     └─ RETURNSTMT
-   │        │        ├─ KW_RET "ret"
-   │        │        └─ EXPRLIST
-   │        │           └─ EXPR
-   │        │              └─ LOGICALOREXPR
-   │        │                 └─ LOGICALANDEXPR
-   │        │                    └─ BITOREXPR
-   │        │                       └─ BITXOREXPR
-   │        │                          └─ BITANDEXPR
-   │        │                             └─ EQUALITYEXPR
-   │        │                                └─ RELATIONALEXPR
-   │        │                                   └─ SHIFTEXPR
-   │        │                                      └─ ADDITIVEEXPR
-   │        │                                         ├─ MULTIPLICATIVEEXPR
-   │        │                                         │  └─ UNARYEXPR
-   │        │                                         │     └─ PRIMARYEXPR
-   │        │                                         │        └─ OPERAND
-   │        │                                         │           └─ IDENT "a"
-   │        │                                         ├─ PLUS "+"
-   │        │                                         └─ MULTIPLICATIVEEXPR
-   │        │                                            ├─ UNARYEXPR
-   │        │                                            │  └─ PRIMARYEXPR
-   │        │                                            │     └─ OPERAND
-   │        │                                            │        └─ IDENT "b"
-   │        │                                            ├─ STAR "*"
-   │        │                                            └─ UNARYEXPR
-   │        │                                               └─ PRIMARYEXPR
-   │        │                                                  └─ OPERAND
-   │        │                                                     └─ INT_LIT "2"
+   │        │  ├─ STMT
+   │        │  │  └─ RETURNSTMT
+   │        │  │     ├─ KW_RET "ret"
+   │        │  │     └─ EXPRLIST
+   │        │  │        └─ EXPR
+   │        │  │           └─ LOGICALOREXPR
+   │        │  │              └─ LOGICALANDEXPR
+   │        │  │                 └─ BITOREXPR
+   │        │  │                    └─ BITXOREXPR
+   │        │  │                       └─ BITANDEXPR
+   │        │  │                          └─ EQUALITYEXPR
+   │        │  │                             └─ RELATIONALEXPR
+   │        │  │                                └─ SHIFTEXPR
+   │        │  │                                   └─ ADDITIVEEXPR
+   │        │  │                                      ├─ MULTIPLICATIVEEXPR
+   │        │  │                                      │  └─ UNARYEXPR
+   │        │  │                                      │     └─ PRIMARYEXPR
+   │        │  │                                      │        └─ OPERAND
+   │        │  │                                      │           └─ IDENT "a"
+   │        │  │                                      ├─ PLUS "+"
+   │        │  │                                      └─ MULTIPLICATIVEEXPR
+   │        │  │                                         ├─ UNARYEXPR
+   │        │  │                                         │  └─ PRIMARYEXPR
+   │        │  │                                         │     └─ OPERAND
+   │        │  │                                         │        └─ IDENT "b"
+   │        │  │                                         ├─ STAR "*"
+   │        │  │                                         └─ UNARYEXPR
+   │        │  │                                            └─ PRIMARYEXPR
+   │        │  │                                               └─ OPERAND
+   │        │  │                                                  └─ INT_LIT "2"
+   │        │  └─ SEMI ";"
+   │        ├─ SEMI ";"
+   │        ├─ SEMI ";"
+   │        ├─ SEMI ";"
+   │        ├─ SEMI ";"
    │        └─ RBRACE "}"
    ├─ TOPDECL
    │  └─ FUNCDECL

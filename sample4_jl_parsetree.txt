@@ -1,0 +1,507 @@
+ROOT
+└─ PROGRAM
+   ├─ PKGDECL
+   │  ├─ KW_PKG "pkg"
+   │  └─ IDENT "main"
+   ├─ IMPLIST
+   │  └─ IMPDECL
+   │     ├─ KW_IMP "imp"
+   │     └─ IMPORTSPEC
+   │        └─ STRING_LIT "\"std/io\""
+   ├─ TOPDECL
+   │  └─ TYPEDECL
+   │     ├─ KW_TYPE "type"
+   │     └─ TYPESPEC
+   │        ├─ IDENT "Quacker"
+   │        └─ TYPE_
+   │           └─ INTERFACETYPE
+   │              ├─ KW_INTERFACE "interface"
+   │              ├─ LBRACE "{"
+   │              ├─ METHODLIST
+   │              │  └─ METHODDECL
+   │              │     ├─ IDENT "quack"
+   │              │     └─ SIGNATURE
+   │              │        ├─ LPAREN "("
+   │              │        ├─ RPAREN ")"
+   │              │        └─ RESULTTYPE
+   │              │           ├─ COLON ":"
+   │              │           └─ TYPE_
+   │              │              └─ TYPE_NAME "string"
+   │              └─ RBRACE "}"
+   ├─ TOPDECL
+   │  └─ TYPEDECL
+   │     ├─ KW_TYPE "type"
+   │     └─ TYPESPEC
+   │        ├─ IDENT "Duck"
+   │        └─ TYPE_
+   │           └─ STRUCTTYPE
+   │              ├─ KW_STRUCT "struct"
+   │              ├─ LBRACE "{"
+   │              ├─ TYPEFIELDLIST
+   │              │  └─ TYPEFIELD
+   │              │     ├─ IDENT "name"
+   │              │     ├─ COLON ":"
+   │              │     └─ TYPE_
+   │              │        └─ TYPE_NAME "string"
+   │              └─ RBRACE "}"
+   ├─ TOPDECL
+   │  └─ TYPEDECL
+   │     ├─ KW_TYPE "type"
+   │     └─ TYPESPEC
+   │        ├─ IDENT "Person"
+   │        └─ TYPE_
+   │           └─ STRUCTTYPE
+   │              ├─ KW_STRUCT "struct"
+   │              ├─ LBRACE "{"
+   │              ├─ TYPEFIELDLIST
+   │              │  └─ TYPEFIELD
+   │              │     ├─ IDENT "name"
+   │              │     ├─ COLON ":"
+   │              │     └─ TYPE_
+   │              │        └─ TYPE_NAME "string"
+   │              └─ RBRACE "}"
+   ├─ TOPDECL
+   │  └─ FUNCDECL
+   │     ├─ KW_DEF "def"
+   │     ├─ LPAREN "("
+   │     ├─ IDENT "d"
+   │     ├─ SIGNATURE
+   │     │  └─ COLON ":"
+   │     └─ BLOCK
+   │        ├─ LBRACE "<missing '{'>"
+   │        ├─ STMTLIST
+   │        │  └─ STMT
+   │        │     └─ SIMPLESTMT
+   │        │        └─ EXPRSTMT
+   │        │           └─ EXPR
+   │        │              └─ LOGICALOREXPR
+   │        │                 └─ LOGICALANDEXPR
+   │        │                    └─ BITOREXPR
+   │        │                       └─ BITXOREXPR
+   │        │                          └─ BITANDEXPR
+   │        │                             └─ EQUALITYEXPR
+   │        │                                └─ RELATIONALEXPR
+   │        │                                   └─ SHIFTEXPR
+   │        │                                      └─ ADDITIVEEXPR
+   │        │                                         └─ MULTIPLICATIVEEXPR
+   │        │                                            └─ UNARYEXPR
+   │        │                                               └─ PRIMARYEXPR
+   │        │                                                  └─ OPERAND
+   │        │                                                     └─ IDENT "Duck"
+   │        └─ RPAREN ")"
+   ├─ TOPDECL
+   │  └─ STMT
+   │     └─ SIMPLESTMT
+   │        └─ EXPRSTMT
+   │           └─ EXPR
+   │              └─ LOGICALOREXPR
+   │                 └─ LOGICALANDEXPR
+   │                    └─ BITOREXPR
+   │                       └─ BITXOREXPR
+   │                          └─ BITANDEXPR
+   │                             └─ EQUALITYEXPR
+   │                                └─ RELATIONALEXPR
+   │                                   └─ SHIFTEXPR
+   │                                      └─ ADDITIVEEXPR
+   │                                         └─ MULTIPLICATIVEEXPR
+   │                                            └─ UNARYEXPR
+   │                                               └─ PRIMARYEXPR
+   │                                                  ├─ PRIMARYEXPR
+   │                                                  │  └─ OPERAND
+   │                                                  │     └─ IDENT "quack"
+   │                                                  └─ CALL
+   │                                                     ├─ LPAREN "("
+   │                                                     └─ RPAREN ")"
+   ├─ COLON ":"
+   ├─ TYPE_NAME "string"
+   ├─ TOPDECL
+   │  └─ STMT
+   │     └─ BLOCK
+   │        ├─ LBRACE "{"
+   │        ├─ STMTLIST
+   │        │  ├─ STMT
+   │        │  │  └─ RETURNSTMT
+   │        │  │     ├─ KW_RET "ret"
+   │        │  │     └─ EXPRLIST
+   │        │  │        └─ EXPR
+   │        │  │           └─ LOGICALOREXPR
+   │        │  │              └─ LOGICALANDEXPR
+   │        │  │                 └─ BITOREXPR
+   │        │  │                    └─ BITXOREXPR
+   │        │  │                       └─ BITANDEXPR
+   │        │  │                          └─ EQUALITYEXPR
+   │        │  │                             └─ RELATIONALEXPR
+   │        │  │                                └─ SHIFTEXPR
+   │        │  │                                   └─ ADDITIVEEXPR
+   │        │  │                                      ├─ MULTIPLICATIVEEXPR
+   │        │  │                                      │  └─ UNARYEXPR
+   │        │  │                                      │     └─ PRIMARYEXPR
+   │        │  │                                      │        ├─ PRIMARYEXPR
+   │        │  │                                      │        │  └─ OPERAND
+   │        │  │                                      │        │     └─ IDENT "d"
+   │        │  │                                      │        └─ SELECTOR
+   │        │  │                                      │           ├─ DOT "."
+   │        │  │                                      │           └─ IDENT "name"
+   │        │  │                                      ├─ PLUS "+"
+   │        │  │                                      └─ MULTIPLICATIVEEXPR
+   │        │  │                                         └─ UNARYEXPR
+   │        │  │                                            └─ PRIMARYEXPR
+   │        │  │                                               └─ OPERAND
+   │        │  │                                                  └─ STRING_LIT "\" says QUACK!\""
+   │        │  └─ SEMI ";"
+   │        └─ RBRACE "}"
+   ├─ TOPDECL
+   │  └─ FUNCDECL
+   │     ├─ KW_DEF "def"
+   │     ├─ LPAREN "("
+   │     ├─ IDENT "p"
+   │     ├─ SIGNATURE
+   │     │  └─ COLON ":"
+   │     └─ BLOCK
+   │        ├─ LBRACE "<missing '{'>"
+   │        ├─ STMTLIST
+   │        │  └─ STMT
+   │        │     └─ SIMPLESTMT
+   │        │        └─ EXPRSTMT
+   │        │           └─ EXPR
+   │        │              └─ LOGICALOREXPR
+   │        │                 └─ LOGICALANDEXPR
+   │        │                    └─ BITOREXPR
+   │        │                       └─ BITXOREXPR
+   │        │                          └─ BITANDEXPR
+   │        │                             └─ EQUALITYEXPR
+   │        │                                └─ RELATIONALEXPR
+   │        │                                   └─ SHIFTEXPR
+   │        │                                      └─ ADDITIVEEXPR
+   │        │                                         └─ MULTIPLICATIVEEXPR
+   │        │                                            └─ UNARYEXPR
+   │        │                                               └─ PRIMARYEXPR
+   │        │                                                  └─ OPERAND
+   │        │                                                     └─ IDENT "Person"
+   │        └─ RPAREN ")"
+   ├─ TOPDECL
+   │  └─ STMT
+   │     └─ SIMPLESTMT
+   │        └─ EXPRSTMT
+   │           └─ EXPR
+   │              └─ LOGICALOREXPR
+   │                 └─ LOGICALANDEXPR
+   │                    └─ BITOREXPR
+   │                       └─ BITXOREXPR
+   │                          └─ BITANDEXPR
+   │                             └─ EQUALITYEXPR
+   │                                └─ RELATIONALEXPR
+   │                                   └─ SHIFTEXPR
+   │                                      └─ ADDITIVEEXPR
+   │                                         └─ MULTIPLICATIVEEXPR
+   │                                            └─ UNARYEXPR
+   │                                               └─ PRIMARYEXPR
+   │                                                  ├─ PRIMARYEXPR
+   │                                                  │  └─ OPERAND
+   │                                                  │     └─ IDENT "quack"
+   │                                                  └─ CALL
+   │                                                     ├─ LPAREN "("
+   │                                                     └─ RPAREN ")"
+   ├─ COLON ":"
+   ├─ TYPE_NAME "string"
+   ├─ TOPDECL
+   │  └─ STMT
+   │     └─ BLOCK
+   │        ├─ LBRACE "{"
+   │        ├─ STMTLIST
+   │        │  ├─ STMT
+   │        │  │  └─ RETURNSTMT
+   │        │  │     ├─ KW_RET "ret"
+   │        │  │     └─ EXPRLIST
+   │        │  │        └─ EXPR
+   │        │  │           └─ LOGICALOREXPR
+   │        │  │              └─ LOGICALANDEXPR
+   │        │  │                 └─ BITOREXPR
+   │        │  │                    └─ BITXOREXPR
+   │        │  │                       └─ BITANDEXPR
+   │        │  │                          └─ EQUALITYEXPR
+   │        │  │                             └─ RELATIONALEXPR
+   │        │  │                                └─ SHIFTEXPR
+   │        │  │                                   └─ ADDITIVEEXPR
+   │        │  │                                      ├─ MULTIPLICATIVEEXPR
+   │        │  │                                      │  └─ UNARYEXPR
+   │        │  │                                      │     └─ PRIMARYEXPR
+   │        │  │                                      │        ├─ PRIMARYEXPR
+   │        │  │                                      │        │  └─ OPERAND
+   │        │  │                                      │        │     └─ IDENT "p"
+   │        │  │                                      │        └─ SELECTOR
+   │        │  │                                      │           ├─ DOT "."
+   │        │  │                                      │           └─ IDENT "name"
+   │        │  │                                      ├─ PLUS "+"
+   │        │  │                                      └─ MULTIPLICATIVEEXPR
+   │        │  │                                         └─ UNARYEXPR
+   │        │  │                                            └─ PRIMARYEXPR
+   │        │  │                                               └─ OPERAND
+   │        │  │                                                  └─ STRING_LIT "\" says: I'm pretending to be a trump!\""
+   │        │  └─ SEMI ";"
+   │        └─ RBRACE "}"
+   ├─ TOPDECL
+   │  └─ FUNCDECL
+   │     ├─ KW_DEF "def"
+   │     ├─ IDENT "makeItQuack"
+   │     ├─ SIGNATURE
+   │     │  ├─ LPAREN "("
+   │     │  ├─ PARAMLIST
+   │     │  │  └─ PARAM
+   │     │  │     ├─ IDENT "x"
+   │     │  │     ├─ COLON ":"
+   │     │  │     └─ TYPE_
+   │     │  │        └─ IDENT "Quacker"
+   │     │  └─ RPAREN ")"
+   │     └─ BLOCK
+   │        ├─ LBRACE "{"
+   │        ├─ STMTLIST
+   │        │  ├─ STMT
+   │        │  │  └─ DECLSTMT
+   │        │  │     └─ VARDECL
+   │        │  │        ├─ KW_VAR "var"
+   │        │  │        └─ VARSPEC
+   │        │  │           ├─ IDENTLIST
+   │        │  │           │  └─ IDENT "msg"
+   │        │  │           ├─ TYPE_
+   │        │  │           │  └─ TYPE_NAME "string"
+   │        │  │           ├─ ASSIGN "="
+   │        │  │           └─ EXPRLIST
+   │        │  │              └─ EXPR
+   │        │  │                 └─ LOGICALOREXPR
+   │        │  │                    └─ LOGICALANDEXPR
+   │        │  │                       └─ BITOREXPR
+   │        │  │                          └─ BITXOREXPR
+   │        │  │                             └─ BITANDEXPR
+   │        │  │                                └─ EQUALITYEXPR
+   │        │  │                                   └─ RELATIONALEXPR
+   │        │  │                                      └─ SHIFTEXPR
+   │        │  │                                         └─ ADDITIVEEXPR
+   │        │  │                                            └─ MULTIPLICATIVEEXPR
+   │        │  │                                               └─ UNARYEXPR
+   │        │  │                                                  └─ PRIMARYEXPR
+   │        │  │                                                     ├─ PRIMARYEXPR
+   │        │  │                                                     │  ├─ PRIMARYEXPR
+   │        │  │                                                     │  │  └─ OPERAND
+   │        │  │                                                     │  │     └─ IDENT "x"
+   │        │  │                                                     │  └─ SELECTOR
+   │        │  │                                                     │     ├─ DOT "."
+   │        │  │                                                     │     └─ IDENT "quack"
+   │        │  │                                                     └─ CALL
+   │        │  │                                                        ├─ LPAREN "("
+   │        │  │                                                        └─ RPAREN ")"
+   │        │  ├─ SEMI ";"
+   │        │  ├─ STMT
+   │        │  │  └─ SIMPLESTMT
+   │        │  │     └─ EXPRSTMT
+   │        │  │        └─ EXPR
+   │        │  │           └─ LOGICALOREXPR
+   │        │  │              └─ LOGICALANDEXPR
+   │        │  │                 └─ BITOREXPR
+   │        │  │                    └─ BITXOREXPR
+   │        │  │                       └─ BITANDEXPR
+   │        │  │                          └─ EQUALITYEXPR
+   │        │  │                             └─ RELATIONALEXPR
+   │        │  │                                └─ SHIFTEXPR
+   │        │  │                                   └─ ADDITIVEEXPR
+   │        │  │                                      └─ MULTIPLICATIVEEXPR
+   │        │  │                                         └─ UNARYEXPR
+   │        │  │                                            └─ PRIMARYEXPR
+   │        │  │                                               ├─ PRIMARYEXPR
+   │        │  │                                               │  ├─ PRIMARYEXPR
+   │        │  │                                               │  │  └─ OPERAND
+   │        │  │                                               │  │     └─ IDENT "io"
+   │        │  │                                               │  └─ SELECTOR
+   │        │  │                                               │     ├─ DOT "."
+   │        │  │                                               │     └─ IDENT "Println"
+   │        │  │                                               └─ CALL
+   │        │  │                                                  ├─ LPAREN "("
+   │        │  │                                                  ├─ ARGLIST
+   │        │  │                                                  │  └─ EXPR
+   │        │  │                                                  │     └─ LOGICALOREXPR
+   │        │  │                                                  │        └─ LOGICALANDEXPR
+   │        │  │                                                  │           └─ BITOREXPR
+   │        │  │                                                  │              └─ BITXOREXPR
+   │        │  │                                                  │                 └─ BITANDEXPR
+   │        │  │                                                  │                    └─ EQUALITYEXPR
+   │        │  │                                                  │                       └─ RELATIONALEXPR
+   │        │  │                                                  │                          └─ SHIFTEXPR
+   │        │  │                                                  │                             └─ ADDITIVEEXPR
+   │        │  │                                                  │                                └─ MULTIPLICATIVEEXPR
+   │        │  │                                                  │                                   └─ UNARYEXPR
+   │        │  │                                                  │                                      └─ PRIMARYEXPR
+   │        │  │                                                  │                                         └─ OPERAND
+   │        │  │                                                  │                                            └─ IDENT "msg"
+   │        │  │                                                  └─ RPAREN ")"
+   │        │  └─ SEMI ";"
+   │        └─ RBRACE "}"
+   ├─ TOPDECL
+   │  └─ FUNCDECL
+   │     ├─ KW_DEF "def"
+   │     ├─ IDENT "main"
+   │     ├─ SIGNATURE
+   │     │  ├─ LPAREN "("
+   │     │  └─ RPAREN ")"
+   │     └─ BLOCK
+   │        ├─ LBRACE "{"
+   │        ├─ STMTLIST
+   │        │  ├─ STMT
+   │        │  │  └─ DECLSTMT
+   │        │  │     └─ VARDECL
+   │        │  │        ├─ KW_VAR "var"
+   │        │  │        └─ VARSPEC
+   │        │  │           ├─ IDENTLIST
+   │        │  │           │  └─ IDENT "d"
+   │        │  │           └─ TYPE_
+   │        │  │              └─ IDENT "Duck"
+   │        │  ├─ SEMI ";"
+   │        │  ├─ STMT
+   │        │  │  └─ SIMPLESTMT
+   │        │  │     └─ ASSIGNSTMT
+   │        │  │        ├─ LHS
+   │        │  │        │  └─ PRIMARYEXPR
+   │        │  │        │     ├─ PRIMARYEXPR
+   │        │  │        │     │  └─ OPERAND
+   │        │  │        │     │     └─ IDENT "d"
+   │        │  │        │     └─ SELECTOR
+   │        │  │        │        ├─ DOT "."
+   │        │  │        │        └─ IDENT "name"
+   │        │  │        ├─ ASSIGNOP
+   │        │  │        │  └─ ASSIGN "="
+   │        │  │        └─ EXPRLIST
+   │        │  │           └─ EXPR
+   │        │  │              └─ LOGICALOREXPR
+   │        │  │                 └─ LOGICALANDEXPR
+   │        │  │                    └─ BITOREXPR
+   │        │  │                       └─ BITXOREXPR
+   │        │  │                          └─ BITANDEXPR
+   │        │  │                             └─ EQUALITYEXPR
+   │        │  │                                └─ RELATIONALEXPR
+   │        │  │                                   └─ SHIFTEXPR
+   │        │  │                                      └─ ADDITIVEEXPR
+   │        │  │                                         └─ MULTIPLICATIVEEXPR
+   │        │  │                                            └─ UNARYEXPR
+   │        │  │                                               └─ PRIMARYEXPR
+   │        │  │                                                  └─ OPERAND
+   │        │  │                                                     └─ STRING_LIT "\"Donald\""
+   │        │  ├─ SEMI ";"
+   │        │  ├─ STMT
+   │        │  │  └─ DECLSTMT
+   │        │  │     └─ VARDECL
+   │        │  │        ├─ KW_VAR "var"
+   │        │  │        └─ VARSPEC
+   │        │  │           ├─ IDENTLIST
+   │        │  │           │  └─ IDENT "p"
+   │        │  │           └─ TYPE_
+   │        │  │              └─ IDENT "Person"
+   │        │  ├─ SEMI ";"
+   │        │  ├─ STMT
+   │        │  │  └─ SIMPLESTMT
+   │        │  │     └─ ASSIGNSTMT
+   │        │  │        ├─ LHS
+   │        │  │        │  └─ PRIMARYEXPR
+   │        │  │        │     ├─ PRIMARYEXPR
+   │        │  │        │     │  └─ OPERAND
+   │        │  │        │     │     └─ IDENT "p"
+   │        │  │        │     └─ SELECTOR
+   │        │  │        │        ├─ DOT "."
+   │        │  │        │        └─ IDENT "name"
+   │        │  │        ├─ ASSIGNOP
+   │        │  │        │  └─ ASSIGN "="
+   │        │  │        └─ EXPRLIST
+   │        │  │           └─ EXPR
+   │        │  │              └─ LOGICALOREXPR
+   │        │  │                 └─ LOGICALANDEXPR
+   │        │  │                    └─ BITOREXPR
+   │        │  │                       └─ BITXOREXPR
+   │        │  │                          └─ BITANDEXPR
+   │        │  │                             └─ EQUALITYEXPR
+   │        │  │                                └─ RELATIONALEXPR
+   │        │  │                                   └─ SHIFTEXPR
+   │        │  │                                      └─ ADDITIVEEXPR
+   │        │  │                                         └─ MULTIPLICATIVEEXPR
+   │        │  │                                            └─ UNARYEXPR
+   │        │  │                                               └─ PRIMARYEXPR
+   │        │  │                                                  └─ OPERAND
+   │        │  │                                                     └─ STRING_LIT "\"Jackie\""
+   │        │  ├─ SEMI ";"
+   │        │  ├─ STMT
+   │        │  │  └─ SIMPLESTMT
+   │        │  │     └─ EXPRSTMT
+   │        │  │        └─ EXPR
+   │        │  │           └─ LOGICALOREXPR
+   │        │  │              └─ LOGICALANDEXPR
+   │        │  │                 └─ BITOREXPR
+   │        │  │                    └─ BITXOREXPR
+   │        │  │                       └─ BITANDEXPR
+   │        │  │                          └─ EQUALITYEXPR
+   │        │  │                             └─ RELATIONALEXPR
+   │        │  │                                └─ SHIFTEXPR
+   │        │  │                                   └─ ADDITIVEEXPR
+   │        │  │                                      └─ MULTIPLICATIVEEXPR
+   │        │  │                                         └─ UNARYEXPR
+   │        │  │                                            └─ PRIMARYEXPR
+   │        │  │                                               ├─ PRIMARYEXPR
+   │        │  │                                               │  └─ OPERAND
+   │        │  │                                               │     └─ IDENT "makeItQuack"
+   │        │  │                                               └─ CALL
+   │        │  │                                                  ├─ LPAREN "("
+   │        │  │                                                  ├─ ARGLIST
+   │        │  │                                                  │  └─ EXPR
+   │        │  │                                                  │     └─ LOGICALOREXPR
+   │        │  │                                                  │        └─ LOGICALANDEXPR
+   │        │  │                                                  │           └─ BITOREXPR
+   │        │  │                                                  │              └─ BITXOREXPR
+   │        │  │                                                  │                 └─ BITANDEXPR
+   │        │  │                                                  │                    └─ EQUALITYEXPR
+   │        │  │                                                  │                       └─ RELATIONALEXPR
+   │        │  │                                                  │                          └─ SHIFTEXPR
+   │        │  │                                                  │                             └─ ADDITIVEEXPR
+   │        │  │                                                  │                                └─ MULTIPLICATIVEEXPR
+   │        │  │                                                  │                                   └─ UNARYEXPR
+   │        │  │                                                  │                                      └─ PRIMARYEXPR
+   │        │  │                                                  │                                         └─ OPERAND
+   │        │  │                                                  │                                            └─ IDENT "d"
+   │        │  │                                                  └─ RPAREN ")"
+   │        │  ├─ SEMI ";"
+   │        │  ├─ STMT
+   │        │  │  └─ SIMPLESTMT
+   │        │  │     └─ EXPRSTMT
+   │        │  │        └─ EXPR
+   │        │  │           └─ LOGICALOREXPR
+   │        │  │              └─ LOGICALANDEXPR
+   │        │  │                 └─ BITOREXPR
+   │        │  │                    └─ BITXOREXPR
+   │        │  │                       └─ BITANDEXPR
+   │        │  │                          └─ EQUALITYEXPR
+   │        │  │                             └─ RELATIONALEXPR
+   │        │  │                                └─ SHIFTEXPR
+   │        │  │                                   └─ ADDITIVEEXPR
+   │        │  │                                      └─ MULTIPLICATIVEEXPR
+   │        │  │                                         └─ UNARYEXPR
+   │        │  │                                            └─ PRIMARYEXPR
+   │        │  │                                               ├─ PRIMARYEXPR
+   │        │  │                                               │  └─ OPERAND
+   │        │  │                                               │     └─ IDENT "makeItQuack"
+   │        │  │                                               └─ CALL
+   │        │  │                                                  ├─ LPAREN "("
+   │        │  │                                                  ├─ ARGLIST
+   │        │  │                                                  │  └─ EXPR
+   │        │  │                                                  │     └─ LOGICALOREXPR
+   │        │  │                                                  │        └─ LOGICALANDEXPR
+   │        │  │                                                  │           └─ BITOREXPR
+   │        │  │                                                  │              └─ BITXOREXPR
+   │        │  │                                                  │                 └─ BITANDEXPR
+   │        │  │                                                  │                    └─ EQUALITYEXPR
+   │        │  │                                                  │                       └─ RELATIONALEXPR
+   │        │  │                                                  │                          └─ SHIFTEXPR
+   │        │  │                                                  │                             └─ ADDITIVEEXPR
+   │        │  │                                                  │                                └─ MULTIPLICATIVEEXPR
+   │        │  │                                                  │                                   └─ UNARYEXPR
+   │        │  │                                                  │                                      └─ PRIMARYEXPR
+   │        │  │                                                  │                                         └─ OPERAND
+   │        │  │                                                  │                                            └─ IDENT "p"
+   │        │  │                                                  └─ RPAREN ")"
+   │        │  └─ SEMI ";"
+   │        └─ RBRACE "}"
+   └─ T_-1 "<EOF>"

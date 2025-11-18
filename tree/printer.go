@@ -13,7 +13,7 @@ func labelFor(node antlr.Tree, p antlr.Parser) string {
 		ruleIdx := n.GetRuleContext().GetRuleIndex()
 		rules := p.GetRuleNames()
 		if ruleIdx >= 0 && ruleIdx < len(rules) {
-			return strings.ToUpper(rules[ruleIdx]) // 规则名大写
+			return strings.ToUpper(rules[ruleIdx])
 		}
 	case antlr.TerminalNode:
 		if tok := n.GetSymbol(); tok != nil {

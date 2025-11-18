@@ -25,6 +25,9 @@ go run cmd/parser/main.go samples/sample2.jl
 echo "Running samples #3................................................"
 go run cmd/parser/main.go samples/sample3.jl
 
+echo "Running samples #4................................................"
+go run cmd/parser/main.go samples/sample4.jl
+
 echo "Running interpreter tests #1........................................."
 go run cmd/interpreter/main.go samples/sample1.jl || true
 
@@ -33,3 +36,6 @@ go run cmd/interpreter/main.go samples/sample2.jl || true
 
 echo "Running interpreter tests #3........................................."
 go run cmd/interpreter/main.go samples/sample3.jl || true
+
+echo "Running interpreter tests #4........................................."
+go run cmd/interpreter/main.go samples/sample4.jl || true
