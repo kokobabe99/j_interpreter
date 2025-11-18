@@ -11,9 +11,7 @@ func InstallBuiltins(root *Env) {
 		Body:   nil, // native
 		Env:    nil,
 	}))
-	// 用一个函数值来模拟 namespace: io
 	root.Set("io", VFunc(&Function{Name: "<namespace:io>", Env: ioNS}))
-
 	// builtin: recover()
 	root.Set("recover", VFunc(&Function{
 		Name:   "recover",

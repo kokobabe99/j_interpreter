@@ -1,0 +1,312 @@
+ROOT
+└─ PROGRAM
+   ├─ PKGDECL
+   │  ├─ KW_PKG "pkg"
+   │  └─ IDENT "main"
+   ├─ IMPLIST
+   │  └─ IMPDECL
+   │     ├─ KW_IMP "imp"
+   │     └─ IMPORTSPEC
+   │        └─ STRING_LIT "\"std/io\""
+   ├─ TOPDECL
+   │  └─ FUNCDECL
+   │     ├─ KW_DEF "def"
+   │     ├─ IDENT "worker"
+   │     ├─ SIGNATURE
+   │     │  ├─ LPAREN "("
+   │     │  ├─ PARAMLIST
+   │     │  │  └─ PARAM
+   │     │  │     ├─ IDENT "c"
+   │     │  │     ├─ COLON ":"
+   │     │  │     └─ TYPE_
+   │     │  │        └─ CHANNELTYPE
+   │     │  │           ├─ KW_CHANNEL "channel"
+   │     │  │           └─ TYPE_
+   │     │  │              └─ TYPE_NAME "string"
+   │     │  └─ RPAREN ")"
+   │     └─ BLOCK
+   │        ├─ LBRACE "{"
+   │        ├─ STMTLIST
+   │        │  ├─ STMT
+   │        │  │  └─ SIMPLESTMT
+   │        │  │     └─ SENDSTMT
+   │        │  │        ├─ EXPR
+   │        │  │        │  └─ LOGICALOREXPR
+   │        │  │        │     └─ LOGICALANDEXPR
+   │        │  │        │        └─ BITOREXPR
+   │        │  │        │           └─ BITXOREXPR
+   │        │  │        │              └─ BITANDEXPR
+   │        │  │        │                 └─ EQUALITYEXPR
+   │        │  │        │                    └─ RELATIONALEXPR
+   │        │  │        │                       └─ SHIFTEXPR
+   │        │  │        │                          └─ ADDITIVEEXPR
+   │        │  │        │                             └─ MULTIPLICATIVEEXPR
+   │        │  │        │                                └─ UNARYEXPR
+   │        │  │        │                                   └─ PRIMARYEXPR
+   │        │  │        │                                      └─ OPERAND
+   │        │  │        │                                         └─ IDENT "c"
+   │        │  │        ├─ CH_SEND "<-"
+   │        │  │        └─ EXPR
+   │        │  │           └─ LOGICALOREXPR
+   │        │  │              └─ LOGICALANDEXPR
+   │        │  │                 └─ BITOREXPR
+   │        │  │                    └─ BITXOREXPR
+   │        │  │                       └─ BITANDEXPR
+   │        │  │                          └─ EQUALITYEXPR
+   │        │  │                             └─ RELATIONALEXPR
+   │        │  │                                └─ SHIFTEXPR
+   │        │  │                                   └─ ADDITIVEEXPR
+   │        │  │                                      └─ MULTIPLICATIVEEXPR
+   │        │  │                                         └─ UNARYEXPR
+   │        │  │                                            └─ PRIMARYEXPR
+   │        │  │                                               └─ OPERAND
+   │        │  │                                                  └─ STRING_LIT "\"hello\""
+   │        │  ├─ SEMI ";"
+   │        │  ├─ STMT
+   │        │  │  └─ SIMPLESTMT
+   │        │  │     └─ SENDSTMT
+   │        │  │        ├─ EXPR
+   │        │  │        │  └─ LOGICALOREXPR
+   │        │  │        │     └─ LOGICALANDEXPR
+   │        │  │        │        └─ BITOREXPR
+   │        │  │        │           └─ BITXOREXPR
+   │        │  │        │              └─ BITANDEXPR
+   │        │  │        │                 └─ EQUALITYEXPR
+   │        │  │        │                    └─ RELATIONALEXPR
+   │        │  │        │                       └─ SHIFTEXPR
+   │        │  │        │                          └─ ADDITIVEEXPR
+   │        │  │        │                             └─ MULTIPLICATIVEEXPR
+   │        │  │        │                                └─ UNARYEXPR
+   │        │  │        │                                   └─ PRIMARYEXPR
+   │        │  │        │                                      └─ OPERAND
+   │        │  │        │                                         └─ IDENT "c"
+   │        │  │        ├─ CH_SEND "<-"
+   │        │  │        └─ EXPR
+   │        │  │           └─ LOGICALOREXPR
+   │        │  │              └─ LOGICALANDEXPR
+   │        │  │                 └─ BITOREXPR
+   │        │  │                    └─ BITXOREXPR
+   │        │  │                       └─ BITANDEXPR
+   │        │  │                          └─ EQUALITYEXPR
+   │        │  │                             └─ RELATIONALEXPR
+   │        │  │                                └─ SHIFTEXPR
+   │        │  │                                   └─ ADDITIVEEXPR
+   │        │  │                                      └─ MULTIPLICATIVEEXPR
+   │        │  │                                         └─ UNARYEXPR
+   │        │  │                                            └─ PRIMARYEXPR
+   │        │  │                                               └─ OPERAND
+   │        │  │                                                  └─ STRING_LIT "\"world\""
+   │        │  ├─ SEMI ";"
+   │        │  ├─ STMT
+   │        │  │  └─ SIMPLESTMT
+   │        │  │     └─ EXPRSTMT
+   │        │  │        └─ EXPR
+   │        │  │           └─ LOGICALOREXPR
+   │        │  │              └─ LOGICALANDEXPR
+   │        │  │                 └─ BITOREXPR
+   │        │  │                    └─ BITXOREXPR
+   │        │  │                       └─ BITANDEXPR
+   │        │  │                          └─ EQUALITYEXPR
+   │        │  │                             └─ RELATIONALEXPR
+   │        │  │                                └─ SHIFTEXPR
+   │        │  │                                   └─ ADDITIVEEXPR
+   │        │  │                                      └─ MULTIPLICATIVEEXPR
+   │        │  │                                         └─ UNARYEXPR
+   │        │  │                                            └─ PRIMARYEXPR
+   │        │  │                                               ├─ PRIMARYEXPR
+   │        │  │                                               │  └─ OPERAND
+   │        │  │                                               │     └─ IDENT "close"
+   │        │  │                                               └─ CALL
+   │        │  │                                                  ├─ LPAREN "("
+   │        │  │                                                  ├─ ARGLIST
+   │        │  │                                                  │  └─ EXPR
+   │        │  │                                                  │     └─ LOGICALOREXPR
+   │        │  │                                                  │        └─ LOGICALANDEXPR
+   │        │  │                                                  │           └─ BITOREXPR
+   │        │  │                                                  │              └─ BITXOREXPR
+   │        │  │                                                  │                 └─ BITANDEXPR
+   │        │  │                                                  │                    └─ EQUALITYEXPR
+   │        │  │                                                  │                       └─ RELATIONALEXPR
+   │        │  │                                                  │                          └─ SHIFTEXPR
+   │        │  │                                                  │                             └─ ADDITIVEEXPR
+   │        │  │                                                  │                                └─ MULTIPLICATIVEEXPR
+   │        │  │                                                  │                                   └─ UNARYEXPR
+   │        │  │                                                  │                                      └─ PRIMARYEXPR
+   │        │  │                                                  │                                         └─ OPERAND
+   │        │  │                                                  │                                            └─ IDENT "c"
+   │        │  │                                                  └─ RPAREN ")"
+   │        │  └─ SEMI ";"
+   │        └─ RBRACE "}"
+   ├─ TOPDECL
+   │  └─ FUNCDECL
+   │     ├─ KW_DEF "def"
+   │     ├─ IDENT "main"
+   │     ├─ SIGNATURE
+   │     │  ├─ LPAREN "("
+   │     │  └─ RPAREN ")"
+   │     └─ BLOCK
+   │        ├─ LBRACE "{"
+   │        ├─ STMTLIST
+   │        │  ├─ STMT
+   │        │  │  └─ DECLSTMT
+   │        │  │     └─ VARDECL
+   │        │  │        ├─ KW_VAR "var"
+   │        │  │        └─ VARSPEC
+   │        │  │           ├─ IDENTLIST
+   │        │  │           │  └─ IDENT "msgs"
+   │        │  │           ├─ TYPE_
+   │        │  │           │  └─ CHANNELTYPE
+   │        │  │           │     ├─ KW_CHANNEL "channel"
+   │        │  │           │     └─ TYPE_
+   │        │  │           │        └─ TYPE_NAME "string"
+   │        │  │           ├─ ASSIGN "="
+   │        │  │           └─ EXPRLIST
+   │        │  │              └─ EXPR
+   │        │  │                 └─ LOGICALOREXPR
+   │        │  │                    └─ LOGICALANDEXPR
+   │        │  │                       └─ BITOREXPR
+   │        │  │                          └─ BITXOREXPR
+   │        │  │                             └─ BITANDEXPR
+   │        │  │                                └─ EQUALITYEXPR
+   │        │  │                                   └─ RELATIONALEXPR
+   │        │  │                                      └─ SHIFTEXPR
+   │        │  │                                         └─ ADDITIVEEXPR
+   │        │  │                                            └─ MULTIPLICATIVEEXPR
+   │        │  │                                               └─ UNARYEXPR
+   │        │  │                                                  └─ PRIMARYEXPR
+   │        │  │                                                     └─ MAKEEXPR
+   │        │  │                                                        ├─ KW_MAKE "make"
+   │        │  │                                                        ├─ LPAREN "("
+   │        │  │                                                        ├─ TYPE_
+   │        │  │                                                        │  └─ CHANNELTYPE
+   │        │  │                                                        │     ├─ KW_CHANNEL "channel"
+   │        │  │                                                        │     └─ TYPE_
+   │        │  │                                                        │        └─ TYPE_NAME "string"
+   │        │  │                                                        ├─ COMMA ","
+   │        │  │                                                        ├─ EXPRLIST
+   │        │  │                                                        │  └─ EXPR
+   │        │  │                                                        │     └─ LOGICALOREXPR
+   │        │  │                                                        │        └─ LOGICALANDEXPR
+   │        │  │                                                        │           └─ BITOREXPR
+   │        │  │                                                        │              └─ BITXOREXPR
+   │        │  │                                                        │                 └─ BITANDEXPR
+   │        │  │                                                        │                    └─ EQUALITYEXPR
+   │        │  │                                                        │                       └─ RELATIONALEXPR
+   │        │  │                                                        │                          └─ SHIFTEXPR
+   │        │  │                                                        │                             └─ ADDITIVEEXPR
+   │        │  │                                                        │                                └─ MULTIPLICATIVEEXPR
+   │        │  │                                                        │                                   └─ UNARYEXPR
+   │        │  │                                                        │                                      └─ PRIMARYEXPR
+   │        │  │                                                        │                                         └─ OPERAND
+   │        │  │                                                        │                                            └─ INT_LIT "2"
+   │        │  │                                                        └─ RPAREN ")"
+   │        │  ├─ SEMI ";"
+   │        │  ├─ STMT
+   │        │  │  └─ SIMPLESTMT
+   │        │  │     └─ SPAWNSTMT
+   │        │  │        ├─ KW_J "j"
+   │        │  │        └─ EXPR
+   │        │  │           └─ LOGICALOREXPR
+   │        │  │              └─ LOGICALANDEXPR
+   │        │  │                 └─ BITOREXPR
+   │        │  │                    └─ BITXOREXPR
+   │        │  │                       └─ BITANDEXPR
+   │        │  │                          └─ EQUALITYEXPR
+   │        │  │                             └─ RELATIONALEXPR
+   │        │  │                                └─ SHIFTEXPR
+   │        │  │                                   └─ ADDITIVEEXPR
+   │        │  │                                      └─ MULTIPLICATIVEEXPR
+   │        │  │                                         └─ UNARYEXPR
+   │        │  │                                            └─ PRIMARYEXPR
+   │        │  │                                               ├─ PRIMARYEXPR
+   │        │  │                                               │  └─ OPERAND
+   │        │  │                                               │     └─ IDENT "worker"
+   │        │  │                                               └─ CALL
+   │        │  │                                                  ├─ LPAREN "("
+   │        │  │                                                  ├─ ARGLIST
+   │        │  │                                                  │  └─ EXPR
+   │        │  │                                                  │     └─ LOGICALOREXPR
+   │        │  │                                                  │        └─ LOGICALANDEXPR
+   │        │  │                                                  │           └─ BITOREXPR
+   │        │  │                                                  │              └─ BITXOREXPR
+   │        │  │                                                  │                 └─ BITANDEXPR
+   │        │  │                                                  │                    └─ EQUALITYEXPR
+   │        │  │                                                  │                       └─ RELATIONALEXPR
+   │        │  │                                                  │                          └─ SHIFTEXPR
+   │        │  │                                                  │                             └─ ADDITIVEEXPR
+   │        │  │                                                  │                                └─ MULTIPLICATIVEEXPR
+   │        │  │                                                  │                                   └─ UNARYEXPR
+   │        │  │                                                  │                                      └─ PRIMARYEXPR
+   │        │  │                                                  │                                         └─ OPERAND
+   │        │  │                                                  │                                            └─ IDENT "msgs"
+   │        │  │                                                  └─ RPAREN ")"
+   │        │  ├─ SEMI ";"
+   │        │  └─ STMT
+   │        │     └─ RANGESTMT
+   │        │        ├─ KW_FR "fr"
+   │        │        ├─ KW_RANGE "range"
+   │        │        ├─ RANGEHEADER
+   │        │        │  └─ EXPR
+   │        │        │     └─ LOGICALOREXPR
+   │        │        │        └─ LOGICALANDEXPR
+   │        │        │           └─ BITOREXPR
+   │        │        │              └─ BITXOREXPR
+   │        │        │                 └─ BITANDEXPR
+   │        │        │                    └─ EQUALITYEXPR
+   │        │        │                       └─ RELATIONALEXPR
+   │        │        │                          └─ SHIFTEXPR
+   │        │        │                             └─ ADDITIVEEXPR
+   │        │        │                                └─ MULTIPLICATIVEEXPR
+   │        │        │                                   └─ UNARYEXPR
+   │        │        │                                      └─ PRIMARYEXPR
+   │        │        │                                         └─ OPERAND
+   │        │        │                                            └─ IDENT "msgs"
+   │        │        └─ BLOCK
+   │        │           ├─ LBRACE "{"
+   │        │           ├─ STMTLIST
+   │        │           │  ├─ STMT
+   │        │           │  │  └─ SIMPLESTMT
+   │        │           │  │     └─ EXPRSTMT
+   │        │           │  │        └─ EXPR
+   │        │           │  │           └─ LOGICALOREXPR
+   │        │           │  │              └─ LOGICALANDEXPR
+   │        │           │  │                 └─ BITOREXPR
+   │        │           │  │                    └─ BITXOREXPR
+   │        │           │  │                       └─ BITANDEXPR
+   │        │           │  │                          └─ EQUALITYEXPR
+   │        │           │  │                             └─ RELATIONALEXPR
+   │        │           │  │                                └─ SHIFTEXPR
+   │        │           │  │                                   └─ ADDITIVEEXPR
+   │        │           │  │                                      └─ MULTIPLICATIVEEXPR
+   │        │           │  │                                         └─ UNARYEXPR
+   │        │           │  │                                            └─ PRIMARYEXPR
+   │        │           │  │                                               ├─ PRIMARYEXPR
+   │        │           │  │                                               │  ├─ PRIMARYEXPR
+   │        │           │  │                                               │  │  └─ OPERAND
+   │        │           │  │                                               │  │     └─ IDENT "io"
+   │        │           │  │                                               │  └─ SELECTOR
+   │        │           │  │                                               │     ├─ DOT "."
+   │        │           │  │                                               │     └─ IDENT "Println"
+   │        │           │  │                                               └─ CALL
+   │        │           │  │                                                  ├─ LPAREN "("
+   │        │           │  │                                                  ├─ ARGLIST
+   │        │           │  │                                                  │  └─ EXPR
+   │        │           │  │                                                  │     └─ LOGICALOREXPR
+   │        │           │  │                                                  │        └─ LOGICALANDEXPR
+   │        │           │  │                                                  │           └─ BITOREXPR
+   │        │           │  │                                                  │              └─ BITXOREXPR
+   │        │           │  │                                                  │                 └─ BITANDEXPR
+   │        │           │  │                                                  │                    └─ EQUALITYEXPR
+   │        │           │  │                                                  │                       └─ RELATIONALEXPR
+   │        │           │  │                                                  │                          └─ SHIFTEXPR
+   │        │           │  │                                                  │                             └─ ADDITIVEEXPR
+   │        │           │  │                                                  │                                └─ MULTIPLICATIVEEXPR
+   │        │           │  │                                                  │                                   └─ UNARYEXPR
+   │        │           │  │                                                  │                                      └─ PRIMARYEXPR
+   │        │           │  │                                                  │                                         └─ OPERAND
+   │        │           │  │                                                  │                                            └─ STRING_LIT "\"tick\""
+   │        │           │  │                                                  └─ RPAREN ")"
+   │        │           │  └─ SEMI ";"
+   │        │           └─ RBRACE "}"
+   │        └─ RBRACE "}"
+   └─ T_-1 "<EOF>"

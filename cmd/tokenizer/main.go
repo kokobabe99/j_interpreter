@@ -110,7 +110,7 @@ func main() {
 	parser.RemoveErrorListeners()
 	parser.AddErrorListener(parErr)
 
-	_ = parser.Program() // 触发解析；如需 AST 遍历，后续可加 Visitor/Listener
+	_ = parser.Program()
 
 	// 3) Aggregate results
 	res := Result{
