@@ -35,7 +35,7 @@ func CallBuiltin(fn *Function, args []Value, env *Env) (Value, bool) {
 	case "recover":
 		if env.Panic != nil {
 			msg := *env.Panic
-			env.Panic = nil // ✅ 清空，表示已恢复
+			env.Panic = nil
 			return VString(msg), true
 		}
 		return VString(""), true

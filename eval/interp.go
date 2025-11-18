@@ -12,7 +12,7 @@ import (
 
 type Interpreter struct {
 	Parser *gen.JLangParser
-	Root   *Env // 全局环境
+	Root   *Env
 }
 
 func NewInterpreter(p *gen.JLangParser) *Interpreter {
@@ -711,10 +711,9 @@ func (ip *Interpreter) evalOperand(env *Env, o gen.IOperandContext) Value {
 		return VInt(n)
 
 	case o.FLOAT_LIT() != nil:
-		// 目前没有专门的 float 类型，这里先简单转成字符串或忽略
 		s := strings.ReplaceAll(o.FLOAT_LIT().GetText(), "_", "")
 		f, _ := strconv.ParseFloat(s, 64)
-		return VInt(int64(f)) // 先粗暴 cast，之后你可以加 FloatKind
+		return VInt(int64(f))
 	case o.STRING_LIT() != nil:
 		text := o.STRING_LIT().GetText()
 		unq := strings.Trim(text, "\"")
@@ -730,7 +729,6 @@ func (ip *Interpreter) evalOperand(env *Env, o gen.IOperandContext) Value {
 		return VString(strings.Trim(text, "'"))
 
 	case o.KW_RECOVER() != nil:
-		// 语法已经保证 recover() 形式，所以这里直接返回一个特殊函数占位
 		return VFunc(&Function{Name: "recover"})
 	}
 
@@ -768,9 +766,6 @@ func (ip *Interpreter) callValue(callee Value, args []Value, cur *Env) Value {
 	return val
 }
 
-/*************** later 解析辅助 ***************/
-
-// 从 expr 一路往右，拿到最右侧的 primaryExpr
 func rightmostPrimary(e gen.IExprContext) gen.IPrimaryExprContext {
 	if e == nil || e.LogicalOrExpr() == nil {
 		return nil
@@ -1010,7 +1005,6 @@ func toString(v Value) string {
 }
 
 func parseIntLike(s string) string {
-	// 支持 0x/0b/0o/0 前缀：strconv.ParseInt(…, 0, …) 已处理
 	return s
 }
 
@@ -1040,7 +1034,6 @@ func compare(op string, a, b Value) bool {
 		}
 		return a.I == b.I
 	}
-	// 其它类型：按字符串比较
 	as, bs := a.String(), b.String()
 	switch op {
 	case "==":

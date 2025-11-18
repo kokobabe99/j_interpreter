@@ -83,15 +83,12 @@ type Function struct {
 	Env    *Env
 }
 
-// Env：词法作用域（支持嵌套）
 type Env struct {
 	Parent *Env
 	Vars   map[string]Value
 
-	// Defer 栈（later），在当前 frame 退出时 LIFO 执行
 	Defers []DeferredCall
 
-	// panic/recover
 	Panic *string
 }
 
@@ -133,6 +130,5 @@ func (e *Env) SetExisting(name string, v Value) bool {
 	return false
 }
 
-/* 运行时“控制流”异常，用 Go panic 传递，外层 recover 截住 */
 type returnSignal struct{ Val Value }
 type panicSignal struct{ Msg string }

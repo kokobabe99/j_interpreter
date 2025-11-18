@@ -58,13 +58,11 @@ func readAll(r io.Reader) (string, error) {
 /*************** main ****************/
 
 func main() {
-	// 读取源码
 	var (
 		code string
 		err  error
 	)
 	if len(os.Args) > 1 {
-		// 从文件读取
 		f, e := os.Open(os.Args[1])
 		if e != nil {
 			fmt.Fprintf(os.Stderr, "open %s: %v\n", os.Args[1], e)
@@ -73,7 +71,6 @@ func main() {
 		defer f.Close()
 		code, err = readAll(f)
 	} else {
-		// 从 stdin 读取
 		code, err = readAll(os.Stdin)
 	}
 	if err != nil {
@@ -81,11 +78,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	// ANTLR 流水线：输入 -> 词法 -> 语法
 	input := antlr.NewInputStream(code)
 	lexer := gen.NewJLangLexer(input)
 
-	// 采集词法错误（通常够用语法阶段统一报）
 	lexer.RemoveErrorListeners()
 	lexErr := &collectingErrListener{}
 	lexer.AddErrorListener(lexErr)
@@ -94,26 +89,21 @@ func main() {
 	parser := gen.NewJLangParser(tokens)
 	parser.BuildParseTrees = true
 
-	// 收集语法错误
 	parser.RemoveErrorListeners()
 	parErr := &collectingErrListener{}
 	parser.AddErrorListener(parErr)
 
-	// 入口：program
 	prog := parser.Program()
 
-	// 若有语法错误，打印并退出（和你之前的错误格式一致）
 	if lexErr.HasErrors() || parErr.HasErrors() {
 		lexErr.Print(os.Stderr)
 		parErr.Print(os.Stderr)
 		os.Exit(2)
 	}
 
-	// 运行解释器（会自动调用 main()，见你的 eval.Interpreter.Run）
 	interp := eval.NewInterpreter(parser)
 	defer func() {
 		if r := recover(); r != nil {
-			// 兜底打印（逻辑上的 panic 已在 eval 层处理并可能再抛）
 			fmt.Fprintf(os.Stderr, "runtime panic: %v\n", r)
 			os.Exit(3)
 		}
