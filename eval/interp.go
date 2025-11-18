@@ -1010,7 +1010,6 @@ func parseIntLike(s string) string {
 
 func opOf(e gen.IExprContext) string {
 	switch {
-	// 旧版用的，现在保留防以后你想复用
 	default:
 		return ""
 	}

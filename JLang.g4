@@ -316,32 +316,26 @@ methodDecl
 
 /*-------------------- EXPRESSIONS --------------------*/
 
-/* 顶层表达式入口 */
 expr
     : logicalOrExpr
     ;
 
-/* 逻辑 OR */
 logicalOrExpr
     : logicalAndExpr (OROR logicalAndExpr)*
     ;
 
-/* 逻辑 AND */
 logicalAndExpr
     : bitOrExpr (ANDAND bitOrExpr)*
     ;
 
-/* 按位 OR */
 bitOrExpr
     : bitXorExpr (BOR bitXorExpr)*
     ;
 
-/* 按位 XOR */
 bitXorExpr
     : bitAndExpr (BXOR bitAndExpr)*
     ;
 
-/* 按位 AND */
 bitAndExpr
     : equalityExpr (BAND equalityExpr)*
     ;
@@ -371,7 +365,6 @@ multiplicativeExpr
     : unaryExpr ((STAR | SLASH | PERCENT) unaryExpr)*
     ;
 
-/* 一元运算 */
 unaryExpr
     : primaryExpr
     | PLUS unaryExpr
@@ -401,7 +394,6 @@ operand
     | KW_RECOVER LPAREN RPAREN
     ;
 
-/* make 表达式：make(T, expr...) */
 makeExpr
     : KW_MAKE LPAREN type_ (COMMA exprList)? RPAREN
     ;
@@ -461,7 +453,7 @@ KW_JOTO     : 'joto';
 KW_DFT      : 'dft';
 KW_PANIC    : 'panic';
 KW_RECOVER  : 'recover';
-KW_MAKE     : 'make';   // <--- 新增：make 关键字
+KW_MAKE     : 'make'; 
 
 TYPE_NAME
     : 'i8'|'i16'|'i32'|'i64'
@@ -550,7 +542,6 @@ TILDE   : '~';
 WS : [ \t\r\n]+ -> skip;
 LINE_COMMENT : '//' ~[\r\n]* -> skip;
 
-/* 支持跨行块注释 */
 BLOCK_COMMENT
     : '/*' ( . | '\r' | '\n' )*? '*/' -> skip
     ;

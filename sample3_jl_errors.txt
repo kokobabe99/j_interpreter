@@ -1,0 +1,3 @@
+error at 6:6: missing '}' at '"world"'
+error at 6:13: extraneous input ';' expecting {<EOF>, 'def', 'var', 'cons', 'type', 'j', 'select', 'later', 'ret', 'if', 'switch', 'fr', 'break', 'continue', 'joto', 'panic', 'recover', 'make', IDENT, INT_LIT, FLOAT_LIT, STRING_LIT, RAW_STR, CHAR_LIT, '(', '{', '+', '-', '*', '&', '!', '~'}
+error at 7:11: extraneous input ';' expecting {<EOF>, 'def', 'var', 'cons', 'type', 'j', 'select', 'later', 'ret', 'if', 'switch', 'fr', 'break', 'continue', 'joto', 'panic', 'recover', 'make', IDENT, INT_LIT, FLOAT_LIT, STRING_LIT, RAW_STR, CHAR_LIT, '(', '{', '+', '-', '*', '&', '!', '~'}
