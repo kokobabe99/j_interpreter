@@ -136,32 +136,11 @@ ROOT
    │        └─ RBRACE "}"
    ├─ TOPDECL
    │  └─ FUNCDECL
-   │     └─ KW_DEF "def"
-   ├─ TOPDECL
-   │  └─ STMT
-   │     └─ SIMPLESTMT
-   │        └─ EXPRSTMT
-   │           └─ EXPR
-   │              └─ LOGICALOREXPR
-   │                 └─ LOGICALANDEXPR
-   │                    └─ BITOREXPR
-   │                       └─ BITXOREXPR
-   │                          └─ BITANDEXPR
-   │                             └─ EQUALITYEXPR
-   │                                └─ RELATIONALEXPR
-   │                                   └─ SHIFTEXPR
-   │                                      └─ ADDITIVEEXPR
-   │                                         └─ MULTIPLICATIVEEXPR
-   │                                            └─ UNARYEXPR
-   │                                               └─ PRIMARYEXPR
-   │                                                  ├─ PRIMARYEXPR
-   │                                                  │  └─ OPERAND
-   │                                                  │     └─ INT_LIT "321"
-   │                                                  └─ CALL
-   │                                                     ├─ LPAREN "("
-   │                                                     └─ RPAREN ")"
-   ├─ TOPDECL
-   │  └─ STMT
+   │     ├─ KW_DEF "def"
+   │     ├─ IDENT "main"
+   │     ├─ SIGNATURE
+   │     │  ├─ LPAREN "("
+   │     │  └─ RPAREN ")"
    │     └─ BLOCK
    │        ├─ LBRACE "{"
    │        ├─ STMTLIST
@@ -187,7 +166,7 @@ ROOT
    │        │  │                                               │  │     └─ IDENT "io"
    │        │  │                                               │  └─ SELECTOR
    │        │  │                                               │     ├─ DOT "."
-   │        │  │                                               │     └─ IDENT "Prirwfdsntln"
+   │        │  │                                               │     └─ IDENT "Println"
    │        │  │                                               └─ CALL
    │        │  │                                                  ├─ LPAREN "("
    │        │  │                                                  ├─ ARGLIST

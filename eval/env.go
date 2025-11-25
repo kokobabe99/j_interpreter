@@ -77,10 +77,11 @@ func (v Value) String() string {
 }
 
 type Function struct {
-	Name   string
-	Params []string
-	Body   gen.IBlockContext
-	Env    *Env
+	Name       string
+	Params     []string
+	ParamKinds []ValueKind
+	Body       gen.IBlockContext
+	Env        *Env
 }
 
 type Env struct {
@@ -132,3 +133,22 @@ func (e *Env) SetExisting(name string, v Value) bool {
 
 type returnSignal struct{ Val Value }
 type panicSignal struct{ Msg string }
+
+func (k ValueKind) String() string {
+	switch k {
+	case NilKind:
+		return "nil"
+	case IntKind:
+		return "int"
+	case BoolKind:
+		return "bool"
+	case StringKind:
+		return "string"
+	case FuncKind:
+		return "func"
+	case ChanKind:
+		return "chan"
+	default:
+		return "unknown"
+	}
+}

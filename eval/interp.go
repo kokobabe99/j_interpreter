@@ -2,6 +2,7 @@
 package eval
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -66,19 +67,47 @@ func (ip *Interpreter) execTopDecl(ctx gen.ITopDeclContext) {
 
 func (ip *Interpreter) execFuncDecl(env *Env, f gen.IFuncDeclContext) {
 	name := f.IDENT().GetText()
-	params := []string{}
+	var params []string
+	var paramKinds []ValueKind
+
 	if sig := f.Signature(); sig != nil {
 		if pl := sig.ParamList(); pl != nil {
 			for _, p := range pl.AllParam() {
+				// 1) 参数名
 				params = append(params, p.IDENT().GetText())
+
+				// 2) 参数类型（只粗略区分 int / bool / string）
+				kind := NilKind
+				if t := p.Type_(); t != nil {
+					if tn := t.TYPE_NAME(); tn != nil {
+						switch tn.GetText() {
+						// 这里你可以按需要细分，我先把所有整数型都映射到 IntKind
+						case "i8", "i16", "i32", "i64",
+							"u8", "u16", "u32", "u64":
+							kind = IntKind
+						case "bool":
+							kind = BoolKind
+						case "string":
+							kind = StringKind
+						default:
+							kind = NilKind // 其它类型先不检查
+						}
+					} else {
+						// arrayType / channelType / structType 等，先当作不检查
+						kind = NilKind
+					}
+				}
+				paramKinds = append(paramKinds, kind)
 			}
 		}
 	}
+
 	fn := &Function{
-		Name:   name,
-		Params: params,
-		Body:   f.Block(), // gen.IBlockContext
-		Env:    env,       // 闭包环境
+		Name:       name,
+		Params:     params,
+		ParamKinds: paramKinds, // 👈 保存参数预期类型
+		Body:       f.Block(),
+		Env:        env,
 	}
 	env.Set(name, VFunc(fn))
 }
@@ -143,7 +172,34 @@ func (ip *Interpreter) execStmt(env *Env, s gen.IStmtContext) {
 		return
 
 	case s.ForStmt() != nil:
-		// v0 未实现
+		fs := s.ForStmt()
+		fc := fs.ForClause()
+
+		// 新建一个子作用域
+		loopEnv := NewEnv(env)
+
+		// init: simpleStmt?
+		if fc != nil && fc.SimpleStmt(0) != nil {
+			ip.execSimpleStmt(loopEnv, fc.SimpleStmt(0))
+		}
+
+		for {
+			// cond: expr?
+			if fc != nil && fc.Expr() != nil {
+				cond := ip.evalExpr(loopEnv, fc.Expr())
+				if !toBool(cond) {
+					break
+				}
+			}
+
+			// 执行循环体
+			ip.execBlock(loopEnv, fs.Block())
+
+			// post: simpleStmt?
+			if fc != nil && fc.SimpleStmt(1) != nil {
+				ip.execSimpleStmt(loopEnv, fc.SimpleStmt(1))
+			}
+		}
 		return
 
 	case s.RangeStmt() != nil:
@@ -746,12 +802,34 @@ func (ip *Interpreter) callValue(callee Value, args []Value, cur *Env) Value {
 	}
 	fn := callee.F
 
-	// 内建（包含 recover / io.Println 等）
+	// 先走 builtin（io.Println / make_channel / recover 等）
 	if v, ok := CallBuiltin(fn, args, cur); ok {
 		return v
 	}
 
-	// 用户函数
+	for i, expected := range fn.ParamKinds {
+		if expected == NilKind {
+			continue // 这个参数我们不做检查（复杂类型或未声明）
+		}
+		if i >= len(args) {
+			// 少传参数，先不强制报错，后面会补 VNil，如果你想严格一点也可以 panic
+			break
+		}
+		got := args[i]
+		if got.Kind != expected {
+			// 报一个清晰一点的错误
+			pname := ""
+			if i < len(fn.Params) {
+				pname = fn.Params[i]
+			}
+			panic(fmt.Sprintf(
+				"type error: function %s param #%d (%s) expects %s, got %s",
+				fn.Name, i+1, pname, expected.String(), got.Kind.String(),
+			))
+		}
+	}
+
+	// 正常绑定参数
 	newEnv := NewEnv(fn.Env)
 	for i, p := range fn.Params {
 		if i < len(args) {
@@ -761,7 +839,6 @@ func (ip *Interpreter) callValue(callee Value, args []Value, cur *Env) Value {
 		}
 	}
 
-	// 运行函数体（由外层 execBlock 统一处理 later / panic / ret）
 	val := ip.execBlock(newEnv, fn.Body)
 	return val
 }
