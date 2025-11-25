@@ -131,8 +131,14 @@ func (e *Env) SetExisting(name string, v Value) bool {
 	return false
 }
 
+// 用 panic 传递的“控制流信号”
+type breakSignal struct{}
+type continueSignal struct{}
 type returnSignal struct{ Val Value }
 type panicSignal struct{ Msg string }
+type jotoSignal struct {
+	Label string
+}
 
 func (k ValueKind) String() string {
 	switch k {

@@ -168,17 +168,15 @@ func (ip *Interpreter) execStmt(env *Env, s gen.IStmtContext) {
 		return
 
 	case s.SwitchStmt() != nil:
-		// v0 未实现
+		ip.execSwitch(env, s.SwitchStmt())
 		return
 
 	case s.ForStmt() != nil:
 		fs := s.ForStmt()
 		fc := fs.ForClause()
 
-		// 新建一个子作用域
 		loopEnv := NewEnv(env)
 
-		// init: simpleStmt?
 		if fc != nil && fc.SimpleStmt(0) != nil {
 			ip.execSimpleStmt(loopEnv, fc.SimpleStmt(0))
 		}
@@ -192,32 +190,42 @@ func (ip *Interpreter) execStmt(env *Env, s gen.IStmtContext) {
 				}
 			}
 
-			// 执行循环体
-			ip.execBlock(loopEnv, fs.Block())
+			ctrl := ip.ExecLoopBody(loopEnv, fs.Block())
+			if ctrl == "break" {
+				break
+			}
 
 			// post: simpleStmt?
 			if fc != nil && fc.SimpleStmt(1) != nil {
 				ip.execSimpleStmt(loopEnv, fc.SimpleStmt(1))
 			}
+
+			if ctrl == "continue" {
+				continue
+			}
 		}
 		return
 
 	case s.RangeStmt() != nil:
-		// 这里是 channel range 的简易实现
 		rs := s.RangeStmt()
 		h := rs.RangeHeader()
 
-		// 目前忽略 "(identList DECL)?" 的绑定，只读取右侧 expr 作为 channel
+		// 右侧 expr 当 channel
 		ch := ip.evalExpr(env, h.Expr())
 		if ch.Kind != ChanKind || ch.C == nil {
 			panic("range over non-channel")
 		}
 
-		// 最小可跑：把当前缓冲里的元素全部消费
 		for len(ch.C.Buf) > 0 {
-			_ = ch.C.Buf[0] // 你后面可以在这里绑定 x := ...
+			elem := ch.C.Buf[0]
 			ch.C.Buf = ch.C.Buf[1:]
-			ip.execBlock(env, rs.Block())
+
+			_ = elem // 将来可以绑定到变量
+
+			ctrl := ip.ExecLoopBody(env, rs.Block())
+			if ctrl == "break" {
+				break
+			}
 		}
 		return
 
@@ -234,16 +242,14 @@ func (ip *Interpreter) execStmt(env *Env, s gen.IStmtContext) {
 		panic(returnSignal{Val: v})
 
 	case s.BreakStmt() != nil:
-		// v0 未实现循环，暂忽略
-		return
+		panic(breakSignal{})
 
 	case s.ContinueStmt() != nil:
-		// v0 未实现循环，暂忽略
-		return
+		panic(continueSignal{})
 
 	case s.JotoStmt() != nil:
-		// v0 未实现 label 跳转
-		return
+		lbl := s.JotoStmt().IDENT().GetText()
+		panic(jotoSignal{Label: lbl})
 
 	case s.PanicStmt() != nil:
 		msg := ip.evalExpr(env, s.PanicStmt().Expr())
@@ -331,13 +337,11 @@ func (ip *Interpreter) execBlock(outer *Env, b gen.IBlockContext) (ret Value) {
 			case panicSignal:
 				env.Panic = &sig.Msg
 
-				// 先跑 later（defer）
 				for i := len(env.Defers) - 1; i >= 0; i-- {
 					ip.callValue(env.Defers[i].Callee, env.Defers[i].Args, env)
 				}
 
 				if env.Panic != nil {
-					// 仍未 recover，继续向上传播 panic
 					panic(sig)
 				}
 				return
@@ -347,7 +351,6 @@ func (ip *Interpreter) execBlock(outer *Env, b gen.IBlockContext) (ret Value) {
 			}
 		}
 
-		// 正常路径：同样需要执行 later
 		for i := len(env.Defers) - 1; i >= 0; i-- {
 			ip.callValue(env.Defers[i].Callee, env.Defers[i].Args, env)
 		}
@@ -356,9 +359,45 @@ func (ip *Interpreter) execBlock(outer *Env, b gen.IBlockContext) (ret Value) {
 	if b.StmtList() == nil {
 		return VNil()
 	}
-	for _, s := range b.StmtList().AllStmt() {
-		ip.execStmt(env, s)
+
+	stmts := b.StmtList().AllStmt()
+
+	labels := make(map[string]int)
+	for i, s := range stmts {
+		if ls := s.LabeledStmt(); ls != nil {
+			name := ls.IDENT().GetText()
+			labels[name] = i
+		}
 	}
+
+	for pc := 0; pc < len(stmts); pc++ {
+		s := stmts[pc]
+
+		func() {
+			defer func() {
+				if r := recover(); r != nil {
+					switch sig := r.(type) {
+					case jotoSignal:
+						if idx, ok := labels[sig.Label]; ok {
+							pc = idx - 1 // -1 是因为 for 循环结束会 pc++
+							return
+						}
+						panic(sig)
+					default:
+						panic(r)
+					}
+				}
+			}()
+
+			// 如果这是一个 labeledStmt，我们执行它里面真正的 stmt
+			if ls := s.LabeledStmt(); ls != nil {
+				ip.execStmt(env, ls.Stmt())
+			} else {
+				ip.execStmt(env, s)
+			}
+		}()
+	}
+
 	return VNil()
 }
 
@@ -1126,5 +1165,98 @@ func compare(op string, a, b Value) bool {
 		return as >= bs
 	default:
 		return as == bs
+	}
+}
+
+func (ip *Interpreter) ExecLoopBody(loopEnv *Env, body gen.IBlockContext) (ctrl string) {
+	defer func() {
+		if r := recover(); r != nil {
+			switch r.(type) {
+			case breakSignal:
+				ctrl = "break"
+			case continueSignal:
+				ctrl = "continue"
+			default:
+				panic(r)
+			}
+		}
+	}()
+	ip.execBlock(loopEnv, body)
+	return ""
+}
+
+func (ip *Interpreter) execSwitch(env *Env, sw gen.ISwitchStmtContext) {
+	// ⭐ 在 switch 内部拦截 breakSignal，让它只退出 switch
+	defer func() {
+		if r := recover(); r != nil {
+			if _, ok := r.(breakSignal); ok {
+				return
+			}
+			panic(r)
+		}
+	}()
+
+	var tag Value
+	hasTag := false
+	if sw.SwitchHead() != nil && sw.SwitchHead().Expr() != nil {
+		tag = ip.evalExpr(env, sw.SwitchHead().Expr())
+		hasTag = true
+	}
+
+	if sw.CaseClauses() == nil {
+		return
+	}
+
+	var defaultClause gen.ICaseClauseContext
+	matched := false
+
+	for _, cc := range sw.CaseClauses().AllCaseClause() {
+		if cc.KW_DFT() != nil {
+			defaultClause = cc
+			continue
+		}
+
+		el := cc.ExprList()
+		if el == nil {
+			continue
+		}
+
+		if hasTag {
+			for _, e := range el.AllExpr() {
+				v := ip.evalExpr(env, e)
+				if compare("==", tag, v) {
+					ip.execCaseBody(env, cc)
+					matched = true
+					break
+				}
+			}
+		} else {
+			for _, e := range el.AllExpr() {
+				v := ip.evalExpr(env, e)
+				if toBool(v) {
+					ip.execCaseBody(env, cc)
+					matched = true
+					break
+				}
+			}
+		}
+
+		if matched {
+			return
+		}
+	}
+
+	if !matched && defaultClause != nil {
+		ip.execCaseBody(env, defaultClause)
+	}
+}
+
+func (ip *Interpreter) execCaseBody(env *Env, cc gen.ICaseClauseContext) {
+	sl := cc.StmtList()
+	if sl == nil {
+		return
+	}
+	for _, s := range sl.AllStmt() {
+		ip.execStmt(env, s)
 	}
 }
