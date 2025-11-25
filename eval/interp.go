@@ -50,7 +50,7 @@ func (ip *Interpreter) execTopDecl(ctx gen.ITopDeclContext) {
 		return
 	}
 	if t := ctx.TypeDecl(); t != nil {
-		_ = t // v0: 忽略类型声明
+		_ = t
 		return
 	}
 	if f := ctx.FuncDecl(); f != nil {
@@ -81,7 +81,6 @@ func (ip *Interpreter) execFuncDecl(env *Env, f gen.IFuncDeclContext) {
 				if t := p.Type_(); t != nil {
 					if tn := t.TYPE_NAME(); tn != nil {
 						switch tn.GetText() {
-						// 这里你可以按需要细分，我先把所有整数型都映射到 IntKind
 						case "i8", "i16", "i32", "i64",
 							"u8", "u16", "u32", "u64":
 							kind = IntKind
@@ -90,10 +89,9 @@ func (ip *Interpreter) execFuncDecl(env *Env, f gen.IFuncDeclContext) {
 						case "string":
 							kind = StringKind
 						default:
-							kind = NilKind // 其它类型先不检查
+							kind = NilKind
 						}
 					} else {
-						// arrayType / channelType / structType 等，先当作不检查
 						kind = NilKind
 					}
 				}
@@ -160,7 +158,6 @@ func (ip *Interpreter) execStmt(env *Env, s gen.IStmtContext) {
 			ip.execConsDecl(env, c)
 			return
 		}
-		// typeDecl v0 忽略
 		return
 
 	case s.IfStmt() != nil:
@@ -230,7 +227,6 @@ func (ip *Interpreter) execStmt(env *Env, s gen.IStmtContext) {
 		return
 
 	case s.SelectStmt() != nil:
-		// v0 未实现
 		return
 
 	case s.ReturnStmt() != nil:
@@ -304,8 +300,32 @@ func (ip *Interpreter) execSimpleStmt(env *Env, ss gen.ISimpleStmtContext) {
 		return
 
 	case ss.SpawnStmt() != nil:
-		// v0：把 j foo(args) 当成立即求值（或在此处排入任务队列）
-		_ = ip.evalExpr(env, ss.SpawnStmt().Expr())
+		spawn := ss.SpawnStmt()
+		fmt.Println("[Debug] SpawnStmt detected:", spawn.GetText()) // 打印语句
+
+		// 1. 尝试提取函数和参数
+		callee, args := ip.extractCall(env, spawn.Expr())
+
+		fmt.Printf("[Debug] ExtractCall Result - CalleeKind: %d, ArgsCount: %d\n", callee.Kind, len(args))
+		if len(args) > 0 {
+			fmt.Printf("[Debug] Arg[0] Kind: %d, Value: %s\n", args[0].Kind, args[0].String())
+		}
+
+		if callee.Kind != FuncKind {
+			fmt.Println("[Debug] Callee is NOT a function, running as expression")
+			go func() { ip.evalExpr(env, spawn.Expr()) }()
+			return
+		}
+
+		// 2. 启动协程
+		go func() {
+			defer func() {
+				if r := recover(); r != nil {
+					fmt.Printf("Worker panic: %v\n", r)
+				}
+			}()
+			ip.callValue(callee, args, env)
+		}()
 		return
 	}
 }
@@ -350,7 +370,6 @@ func (ip *Interpreter) execBlock(outer *Env, b gen.IBlockContext) (ret Value) {
 			}
 		}
 
-		// 2. 正常退出块时的 defer 执行
 		for i := len(env.Defers) - 1; i >= 0; i-- {
 			ip.callValue(env.Defers[i].Callee, env.Defers[i].Args, env)
 		}
@@ -362,7 +381,6 @@ func (ip *Interpreter) execBlock(outer *Env, b gen.IBlockContext) (ret Value) {
 
 	stmts := b.StmtList().AllStmt()
 
-	// 扫描 Label (用于 Goto/Joto)
 	labels := make(map[string]int)
 	for i, s := range stmts {
 		if ls := s.LabeledStmt(); ls != nil {
@@ -375,18 +393,15 @@ func (ip *Interpreter) execBlock(outer *Env, b gen.IBlockContext) (ret Value) {
 	for pc := 0; pc < len(stmts); pc++ {
 		s := stmts[pc]
 
-		// 这里的匿名函数是为了处理 Joto (Goto) 的局部跳转
 		func() {
 			defer func() {
 				if r := recover(); r != nil {
 					switch sig := r.(type) {
 					case jotoSignal:
-						// 如果是当前块内的跳转
 						if idx, ok := labels[sig.Label]; ok {
 							pc = idx - 1 // -1 是因为 loop 结尾会 pc++
 							return
 						}
-						// 如果没找到 Label，继续向上抛，也许在外层块
 						panic(sig)
 					default:
 						panic(r)
@@ -421,8 +436,6 @@ func (ip *Interpreter) evalExpr(env *Env, e gen.IExprContext) Value {
 	return ip.evalLogicalOr(env, e.LogicalOrExpr())
 }
 
-/*** 分层表达式求值，对应新的 .g4 ***/
-
 // logicalOrExpr : logicalAndExpr (OROR logicalAndExpr)* ;
 func (ip *Interpreter) evalLogicalOr(env *Env, ctx gen.ILogicalOrExprContext) Value {
 
@@ -437,15 +450,12 @@ func (ip *Interpreter) evalLogicalOr(env *Env, ctx gen.ILogicalOrExprContext) Va
 	// 先算第一个
 	v := ip.evalLogicalAnd(env, items[0])
 
-	// 如果只有一个项，直接返回原值（可能是 int / chan / string / bool 等）
 	if len(items) == 1 {
 		return v
 	}
 
-	// 有多个项时，才做 || 逻辑，结果是 bool
 	for i := 1; i < len(items); i++ {
 		if toBool(v) {
-			// 短路：前面已经为真
 			return VBool(true)
 		}
 		v = ip.evalLogicalAnd(env, items[i])
@@ -546,7 +556,6 @@ func (ip *Interpreter) evalEquality(env *Env, ctx gen.IEqualityExprContext) Valu
 	left := ip.evalRelational(env, rel[0])
 	right := ip.evalRelational(env, rel[1])
 
-	// 只看第一个操作符
 	if ctx.GetChildCount() >= 2 {
 		if node, ok := ctx.GetChild(1).(interface{ GetText() string }); ok {
 			op := node.GetText()
@@ -692,7 +701,21 @@ func (ip *Interpreter) evalMultiplicative(env *Env, ctx gen.IMultiplicativeExprC
 }
 
 func (ip *Interpreter) evalUnary(env *Env, u gen.IUnaryExprContext) Value {
-	// unaryExpr : primaryExpr | PLUS unaryExpr | ...
+
+	if u.CH_SEND() != nil {
+		chExpr := u.UnaryExpr()
+		chVal := ip.evalUnary(env, chExpr)
+
+		if chVal.Kind != ChanKind || chVal.Ch == nil {
+			panic("runtime error: receive from non-channel")
+		}
+
+		val, ok := <-chVal.Ch
+		if !ok {
+			return VNil()
+		}
+		return val
+	}
 	if u.PrimaryExpr() != nil {
 		return ip.evalPrimary(env, u.PrimaryExpr())
 	}
@@ -707,10 +730,8 @@ func (ip *Interpreter) evalUnary(env *Env, u gen.IUnaryExprContext) Value {
 	case u.TILDE() != nil:
 		return VInt(^toInt(inner))
 	case u.STAR() != nil:
-		// 解引用未实现
 		return inner
 	case u.BAND() != nil:
-		// 取址未实现
 		return inner
 	default:
 		return inner
@@ -723,7 +744,6 @@ func (ip *Interpreter) evalPrimary(env *Env, p gen.IPrimaryExprContext) Value {
 		return VNil()
 	}
 
-	// 1. 最底层：operand 或 makeExpr
 	if px.Operand() != nil {
 		return ip.evalOperand(env, px.Operand())
 	}
@@ -731,16 +751,13 @@ func (ip *Interpreter) evalPrimary(env *Env, p gen.IPrimaryExprContext) Value {
 		return ip.evalMakeExpr(env, px.MakeExpr())
 	}
 
-	// 2. 链式：primaryExpr selector/index/call
 	if px.PrimaryExpr() == nil {
 		return VNil()
 	}
 	cur := ip.evalPrimary(env, px.PrimaryExpr())
 
-	// selector: x.y
 	if px.Selector() != nil {
 		name := px.Selector().IDENT().GetText()
-		// 简单模拟 package/对象成员：如果 cur.F.Env 不为空，就从那里面取
 		if cur.Kind == FuncKind && cur.F.Env != nil {
 			if v, ok := cur.F.Env.Get(name); ok {
 				return v
@@ -760,7 +777,6 @@ func (ip *Interpreter) evalPrimary(env *Env, p gen.IPrimaryExprContext) Value {
 		return ip.callValue(cur, args, env)
 	}
 
-	// index: v0 未实现（数组/切片）
 	if px.Index() != nil {
 		return VNil()
 	}
@@ -770,32 +786,18 @@ func (ip *Interpreter) evalPrimary(env *Env, p gen.IPrimaryExprContext) Value {
 
 func (ip *Interpreter) evalMakeExpr(env *Env, m gen.IMakeExprContext) Value {
 	t := m.Type_()
-	if t == nil {
-		return VNil()
-	}
 
-	// 只支援 channel 类型：make(channel string, 2)
-	isChan := false
 	if t.ChannelType() != nil {
-		isChan = true
-	}
-
-	if !isChan {
-		// 目前只实现 channel 的 make
-		return VNil()
-	}
-
-	// cap 参数（可选）
-	capacity := int64(0)
-	if m.ExprList() != nil && len(m.ExprList().AllExpr()) > 0 {
-		capacity = toInt(ip.evalExpr(env, m.ExprList().Expr(0)))
-		if capacity < 0 {
-			capacity = 0
+		cap := int64(0)
+		if m.ExprList() != nil {
+			cap = toInt(ip.evalExpr(env, m.ExprList().Expr(0)))
 		}
+		fmt.Printf("[Debug] Creating Channel with Cap: %d\n", cap)
+		return VChan(cap)
 	}
 
-	// ✅ 用上面刚刚统一好的 VChan
-	return VChan(capacity)
+	fmt.Println("[Error] MakeExpr only supports channels currently")
+	return VNil()
 }
 func (ip *Interpreter) evalOperand(env *Env, o gen.IOperandContext) Value {
 	switch {
@@ -824,7 +826,6 @@ func (ip *Interpreter) evalOperand(env *Env, o gen.IOperandContext) Value {
 		return VString(strings.Trim(o.RAW_STR().GetText(), "`"))
 
 	case o.CHAR_LIT() != nil:
-		// 简单处理：把字符当成长度为 1 的 string
 		text := o.CHAR_LIT().GetText()
 		return VString(strings.Trim(text, "'"))
 
@@ -850,7 +851,6 @@ func (ip *Interpreter) callValue(callee Value, args []Value, cur *Env) (ret Valu
 		return v
 	}
 
-	// 3. 参数类型检查
 	for i, expected := range fn.ParamKinds {
 		if expected == NilKind {
 			continue
@@ -1028,14 +1028,14 @@ func rightmostPrimaryFromUnary(ctx gen.IUnaryExprContext) gen.IPrimaryExprContex
 
 // later 后紧跟调用：抽出 callee/args（支持 IDENT(...) 或 io.Println(...) 链式）
 func (ip *Interpreter) extractCall(env *Env, e gen.IExprContext) (Value, []Value) {
-	if pe := rightmostPrimary(e); pe != nil {
-		if v, args := ip.extractCallPrimary(env, pe); v.Kind == FuncKind || len(args) > 0 {
-			return v, args
-		}
+	pe := rightmostPrimary(e)
+
+	if pe != nil && pe.Call() != nil {
+		return ip.extractCallPrimary(env, pe)
 	}
-	// 回退：立即求值（非显式调用形态）
-	v := ip.evalExpr(env, e)
-	return v, nil
+
+	fmt.Println("[Debug] extractCall failed to find Call structure")
+	return ip.evalExpr(env, e), nil
 }
 
 func (ip *Interpreter) extractCallPrimary(env *Env, p gen.IPrimaryExprContext) (Value, []Value) {

@@ -39,3 +39,6 @@ go run cmd/interpreter/main.go samples/sample_case_break.jl || true
 
 echo "Running interpreter tests #fib........................................."
 go run cmd/interpreter/main.go samples/sample_fib.jl || true
+
+echo "Running interpreter tests #fib2........................................."
+go run cmd/interpreter/main.go samples/sample_fib_2.jl || true

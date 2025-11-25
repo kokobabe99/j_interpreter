@@ -1,8 +1,8 @@
 error at 16:5: extraneous input '(' expecting IDENT
 error at 16:7: mismatched input ':' expecting '('
 error at 16:13: mismatched input ')' expecting '}'
-error at 16:22: extraneous input ':' expecting {<EOF>, 'def', 'var', 'cons', 'type', 'j', 'select', 'later', 'ret', 'if', 'switch', 'fr', 'break', 'continue', 'joto', 'panic', 'recover', 'make', IDENT, INT_LIT, FLOAT_LIT, STRING_LIT, RAW_STR, CHAR_LIT, '(', '{', '+', '-', '*', '&', '!', '~'}
+error at 16:22: extraneous input ':' expecting {<EOF>, 'def', 'var', 'cons', 'type', 'j', 'select', 'later', 'ret', 'if', 'switch', 'fr', 'break', 'continue', 'joto', 'panic', 'recover', 'make', IDENT, INT_LIT, FLOAT_LIT, STRING_LIT, RAW_STR, CHAR_LIT, '<-', '(', '{', '+', '-', '*', '&', '!', '~'}
 error at 20:5: extraneous input '(' expecting IDENT
 error at 20:7: mismatched input ':' expecting '('
 error at 20:15: mismatched input ')' expecting '}'
-error at 20:24: extraneous input ':' expecting {<EOF>, 'def', 'var', 'cons', 'type', 'j', 'select', 'later', 'ret', 'if', 'switch', 'fr', 'break', 'continue', 'joto', 'panic', 'recover', 'make', IDENT, INT_LIT, FLOAT_LIT, STRING_LIT, RAW_STR, CHAR_LIT, '(', '{', '+', '-', '*', '&', '!', '~'}
+error at 20:24: extraneous input ':' expecting {<EOF>, 'def', 'var', 'cons', 'type', 'j', 'select', 'later', 'ret', 'if', 'switch', 'fr', 'break', 'continue', 'joto', 'panic', 'recover', 'make', IDENT, INT_LIT, FLOAT_LIT, STRING_LIT, RAW_STR, CHAR_LIT, '<-', '(', '{', '+', '-', '*', '&', '!', '~'}

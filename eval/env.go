@@ -2,6 +2,7 @@ package eval
 
 import (
 	"fmt"
+	"sync"
 
 	gen "interpreter/parser_src"
 )
@@ -29,6 +30,7 @@ type Value struct {
 	S    string
 	F    *Function
 	C    *Channel
+	Ch   chan Value
 }
 
 func VNil() Value             { return Value{Kind: NilKind} }
@@ -37,17 +39,13 @@ func VBool(v bool) Value      { return Value{Kind: BoolKind, B: v} }
 func VString(v string) Value  { return Value{Kind: StringKind, S: v} }
 func VFunc(f *Function) Value { return Value{Kind: FuncKind, F: f} }
 
-// ✅ 统一的 channel 构造：带 capacity
 func VChan(capacity int64) Value {
 	if capacity < 0 {
 		capacity = 0
 	}
 	return Value{
 		Kind: ChanKind,
-		C: &Channel{
-			Buf:    make([]Value, 0, capacity),
-			Closed: false,
-		},
+		Ch:   make(chan Value, capacity),
 	}
 }
 
@@ -87,7 +85,7 @@ type Function struct {
 type Env struct {
 	Parent *Env
 	Vars   map[string]Value
-
+	sync.RWMutex
 	Defers []DeferredCall
 
 	Panic *string
@@ -106,6 +104,8 @@ func NewEnv(parent *Env) *Env {
 }
 
 func (e *Env) Get(name string) (Value, bool) {
+	e.RLock()
+	defer e.RUnlock()
 	cur := e
 	for cur != nil {
 		if v, ok := cur.Vars[name]; ok {
@@ -117,6 +117,8 @@ func (e *Env) Get(name string) (Value, bool) {
 }
 
 func (e *Env) Set(name string, v Value) {
+	e.Lock()
+	defer e.Unlock()
 	e.Vars[name] = v
 }
 

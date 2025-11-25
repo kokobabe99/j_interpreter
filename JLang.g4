@@ -373,6 +373,7 @@ unaryExpr
     | TILDE unaryExpr
     | STAR unaryExpr
     | BAND unaryExpr
+    | CH_SEND unaryExpr
     ;
 
 primaryExpr
