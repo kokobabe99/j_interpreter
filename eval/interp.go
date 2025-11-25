@@ -330,27 +330,27 @@ func (ip *Interpreter) execBlock(outer *Env, b gen.IBlockContext) (ret Value) {
 	defer func() {
 		if r := recover(); r != nil {
 			switch sig := r.(type) {
-			case returnSignal:
-				ret = sig.Val
-				return
 
 			case panicSignal:
 				env.Panic = &sig.Msg
-
 				for i := len(env.Defers) - 1; i >= 0; i-- {
 					ip.callValue(env.Defers[i].Callee, env.Defers[i].Args, env)
 				}
-
 				if env.Panic != nil {
 					panic(sig)
 				}
 				return
 
 			default:
+				for i := len(env.Defers) - 1; i >= 0; i-- {
+					// 注意：defer 里的 panic 可能会覆盖原有的 panic，这里简化处理
+					ip.callValue(env.Defers[i].Callee, env.Defers[i].Args, env)
+				}
 				panic(r)
 			}
 		}
 
+		// 2. 正常退出块时的 defer 执行
 		for i := len(env.Defers) - 1; i >= 0; i-- {
 			ip.callValue(env.Defers[i].Callee, env.Defers[i].Args, env)
 		}
@@ -362,6 +362,7 @@ func (ip *Interpreter) execBlock(outer *Env, b gen.IBlockContext) (ret Value) {
 
 	stmts := b.StmtList().AllStmt()
 
+	// 扫描 Label (用于 Goto/Joto)
 	labels := make(map[string]int)
 	for i, s := range stmts {
 		if ls := s.LabeledStmt(); ls != nil {
@@ -370,18 +371,22 @@ func (ip *Interpreter) execBlock(outer *Env, b gen.IBlockContext) (ret Value) {
 		}
 	}
 
+	// 逐条执行语句
 	for pc := 0; pc < len(stmts); pc++ {
 		s := stmts[pc]
 
+		// 这里的匿名函数是为了处理 Joto (Goto) 的局部跳转
 		func() {
 			defer func() {
 				if r := recover(); r != nil {
 					switch sig := r.(type) {
 					case jotoSignal:
+						// 如果是当前块内的跳转
 						if idx, ok := labels[sig.Label]; ok {
-							pc = idx - 1 // -1 是因为 for 循环结束会 pc++
+							pc = idx - 1 // -1 是因为 loop 结尾会 pc++
 							return
 						}
+						// 如果没找到 Label，继续向上抛，也许在外层块
 						panic(sig)
 					default:
 						panic(r)
@@ -389,7 +394,7 @@ func (ip *Interpreter) execBlock(outer *Env, b gen.IBlockContext) (ret Value) {
 				}
 			}()
 
-			// 如果这是一个 labeledStmt，我们执行它里面真正的 stmt
+			// 执行实际语句
 			if ls := s.LabeledStmt(); ls != nil {
 				ip.execStmt(env, ls.Stmt())
 			} else {
@@ -835,28 +840,26 @@ func (ip *Interpreter) evalOperand(env *Env, o gen.IOperandContext) Value {
 
 /*************** Calls ***************/
 
-func (ip *Interpreter) callValue(callee Value, args []Value, cur *Env) Value {
+func (ip *Interpreter) callValue(callee Value, args []Value, cur *Env) (ret Value) {
 	if callee.Kind != FuncKind || callee.F == nil {
 		return VNil()
 	}
 	fn := callee.F
 
-	// 先走 builtin（io.Println / make_channel / recover 等）
 	if v, ok := CallBuiltin(fn, args, cur); ok {
 		return v
 	}
 
+	// 3. 参数类型检查
 	for i, expected := range fn.ParamKinds {
 		if expected == NilKind {
-			continue // 这个参数我们不做检查（复杂类型或未声明）
+			continue
 		}
 		if i >= len(args) {
-			// 少传参数，先不强制报错，后面会补 VNil，如果你想严格一点也可以 panic
 			break
 		}
 		got := args[i]
 		if got.Kind != expected {
-			// 报一个清晰一点的错误
 			pname := ""
 			if i < len(fn.Params) {
 				pname = fn.Params[i]
@@ -868,7 +871,6 @@ func (ip *Interpreter) callValue(callee Value, args []Value, cur *Env) Value {
 		}
 	}
 
-	// 正常绑定参数
 	newEnv := NewEnv(fn.Env)
 	for i, p := range fn.Params {
 		if i < len(args) {
@@ -878,8 +880,20 @@ func (ip *Interpreter) callValue(callee Value, args []Value, cur *Env) Value {
 		}
 	}
 
-	val := ip.execBlock(newEnv, fn.Body)
-	return val
+	defer func() {
+		if r := recover(); r != nil {
+			switch sig := r.(type) {
+			case returnSignal:
+				ret = sig.Val
+			default:
+				panic(r)
+			}
+		}
+	}()
+
+	ip.execBlock(newEnv, fn.Body)
+
+	return VNil()
 }
 
 func rightmostPrimary(e gen.IExprContext) gen.IPrimaryExprContext {

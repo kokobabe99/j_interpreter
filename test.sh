@@ -31,7 +31,11 @@ go run cmd/interpreter/main.go samples/sample_if.jl || true
 echo "Running interpreter tests #for........................................."
 go run cmd/interpreter/main.go samples/sample_for.jl || true
 
-# echo "Running interpreter tests #joto........................................."
-# go run cmd/interpreter/main.go samples/sample_joto.jl || true
+echo "Running interpreter tests #joto........................................."
+go run cmd/interpreter/main.go samples/sample_joto.jl || true
+
 echo "Running interpreter tests #case........................................."
 go run cmd/interpreter/main.go samples/sample_case_break.jl || true
+
+echo "Running interpreter tests #fib........................................."
+go run cmd/interpreter/main.go samples/sample_fib.jl || true
